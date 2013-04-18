@@ -31,3 +31,11 @@ if ( ! function_exists('img'))
         return '<img src="' . img_url($nom) . '" alt="' . $alt . '" />';
     }
 }
+
+if ( ! function_exists('geo_url'))
+{
+    function geo_url($nom)
+    {
+        return 'assets/geoloc/php-1.11/' . $nom;
+    }
+}

@@ -16,7 +16,7 @@
             <li><a href="<?php echo site_url('actu');?>">Le concept</a></li>
             <li><a href="<?php echo site_url('actu');?>">Historique</a></li>
             <li><a href="<?php echo site_url('actu');?>">Nos valeurs</a></li>
-            <li><a href="<?php echo site_url('actu');?>">Localisation/contact</a></li>
+            <li><a href="<?php echo site_url('localisation');?>">Localisation/contact</a></li>
           </ul>
         </li>
         <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Le gaspillage en image <b class="caret"></b> </a>
