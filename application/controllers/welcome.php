@@ -66,7 +66,8 @@ class Welcome extends CI_Controller {
 		else
 	    {
 			$data = array();
-	        $data['user_info'] = $this->ip_model->get_info();
+	        //$data['user_info'] = $this->ip_model->get_info();
+			$data['user_info'] = "";
 			
 			$this->load->library('layout');
 			$this->load_assets();
