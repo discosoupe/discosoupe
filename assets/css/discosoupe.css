@@ -2,8 +2,16 @@ h1{
 	color: darkgreen;
 }
 
+h3{
+	color: darkorange;
+}
+
+h5{
+	color: darkred;
+}
+
 #myCarousel{
-	width: 530px;
+	width: 1000px;
 }
 
 .carousel-inner {

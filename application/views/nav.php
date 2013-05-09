@@ -6,7 +6,7 @@
         <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Toutes les actualités <b class="caret"></b> </a>
           <ul class="dropdown-menu">
             <li><a href="<?php echo site_url('actu');?>">Actualités</a></li>
-            <li><a href="<?php echo site_url('actu');?>">Agenda & évènements</a></li>
+            <li><a href="<?php echo site_url('agenda');?>">Agenda & évènements</a></li>
             <li><a href="<?php echo site_url('actu');?>">Articles de presse</a></li>
           </ul>
         </li>

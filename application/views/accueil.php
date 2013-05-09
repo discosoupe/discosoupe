@@ -1,65 +1,91 @@
+<?php if(validation_errors()) echo "<script>alert('Les champs ne sont pas correctement remplis')</script>" ?>
 
-<div class="container">
-	<div class="row">
-		<div class="span12">
-			Recueil d'infographie : Disco soupe sensibilise au gaspillage alimentaire au cours d'un évènement festif !
-			<br />Rejoignez nous !!!
-			<br /><br />
-		</div>
+	<div class="tabbable"> <!-- Only required for left/right tabs -->
+	  <ul class="nav nav-tabs">
+	    <li class="active"><a href="#tab1">Annonces ta disco soupe</a></li>
+	    <li><a href="<?php echo site_url('annoncepartenaire');?>">Annonces ton partenariat</a></li>
+	  </ul>
+	  <div class="tab-content">
+	    <div class="tab-pane active" id="tab1">
+			<div class="well">
+				<form class="form-horizontal" method="post" action="">
+					<div class="input-append">
+						<div class="control-group">
+							<script>
+							  $(function() {
+							    $( "#date" ).datetimepicker();
+							  });
+							</script>
+							<label class="control-label" for="Date">Date :</label>
+						    <div class="controls">
+						        <input id="date" type="date" name="date" value="<?php echo set_value('date'); ?>" />
+						        <h5><?php echo form_error('date'); ?></h5>
+						    </div>
+						</div>
+					</div>
+					<div class="input-prepend">
+						<div class="control-group"> 
+							<label class="control-label" for="lieu">Lieu :</label>
+						    <div class="controls">
+						      <input type="text" id="lieu"  name="lieu" value="<?php echo set_value('lieu'); ?>" >
+						      <h5><?php echo form_error('lieu'); ?></h5>
+						    </div>
+						</div>
+					</div>
+					<div class="input-append">
+						<div class="control-group"> 
+							<label class="control-label" for="adresse">Adresse de contact :</label>
+						    <div class="controls">
+						      <textarea name="adresse"><?php echo set_value('adresse'); ?></textarea>
+						       <h5><?php echo form_error('adresse'); ?></h5>
+						    </div>
+						</div>
+					</div>
+					<div class="input-prepend">
+						<div class="control-group">
+							<label class="control-label" for="evenement">Evènement :</label>
+						    <div class="controls">
+						    	<textarea name="evenement"><?php echo set_value('evenement'); ?></textarea>
+					    		<h5><?php echo form_error('evenement'); ?></h5>
+						    </div>
+						</div>
+					</div>
+					<div class="input-append">
+						<div class="control-group"> 
+							<label class="control-label" for="telephone">Téléphone :</label>
+						    <div class="controls">
+						      <input type="text" id="telephone"  name="telephone" value="<?php echo set_value('telephone'); ?>" >
+						       <h5><?php echo form_error('telephone'); ?></h5>
+						    </div>
+						</div>
+					</div>
+					<div class="input-append">
+						<div class="control-group"> 
+							<label class="control-label" for="contact">Contact :</label>
+						    <div class="controls">
+						      <input type="text" id="contact"  name="contact" value="<?php echo set_value('contact'); ?>" >
+						       <h5><?php echo form_error('contact'); ?></h5>
+						    </div>
+						</div>
+					</div>
+					<div class="input-append">
+						<div class="control-group"> 
+							<label class="control-label" for="email">Email :</label>
+						    <div class="controls">
+						      <input type="text" id="email"  name="email" value="<?php echo set_value('email'); ?>" >
+						       <h5><?php echo form_error('email'); ?></h5>
+						    </div>
+						</div>
+					</div>
+				 	 <div class="control-group">
+					    <div class="controls">
+					      <button class="btn btn-success" type="submit" name="validation" value="creerdisco">Envoyer</button>
+					    </div>
+					 </div>
+				</form>
+			</div>
+	    </div>
+	  </div>
 	</div>
-	<div class="row">
-    	<div class="span12">
-      		<div id="myCarousel" class="carousel slide">
-        		<div class="carousel-inner thumbnail">
-          			<div class="item active"> <img alt="" src="<?php echo img_url('discosoupe.jpg') ?>"/>
-            			<div class="carousel-caption">
-              				<p>Disco soupe !!!</p>
-           		 		</div>
-          			</div>
-          			<div class="item"> <img alt="" src="<?php echo img_url('discosoupe2.jpg') ?>"/>
-            			<div class="carousel-caption">
-              				<p>Fête ouverte à tous</p>
-            			</div>
-          			</div>
-          			<div class="item"> <img alt="" src="<?php echo img_url('discosoupe3.jpg') ?>"/>
-            		<div class="carousel-caption">
-              			<p>Venez comme vous êtes !</p>
-            		</div>
-          		</div>
-        	</div>
-        	<a class="carousel-control left" data-slide="prev" href="#myCarousel">‹</a> <a class="carousel-control right" data-slide="next" href="#myCarousel">›</a> </div>
-    	</div>
-	</div>
+	
 </div>
-  
-<form class="form-horizontal" method="post" action="">
-	<div class="input-append">
-		<div class="control-group">
-			<label class="control-label" for="Date">Date :</label>
-		    <div class="controls">
-		        <input type="date" name="date" value="<?php echo set_value('date'); ?>" />
-	    		<?php echo form_error('date'); ?>
-		    </div>
-		</div>
-	</div>
-	<div class="input-prepend">
-		<div class="control-group"> 
-			<label class="control-label" for="lieu">Lieu :</label>
-		    <div class="controls">
-		      <input type="text" id="lieu"  name="lieu" value="<?php echo set_value('lieu'); ?>" >
-		       <?php echo form_error('lieu'); ?>
-		    </div>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="inputEmail">Email</label>
-	    <div class="controls">
-	      <input type="text" id="inputEmail" placeholder="Email">
-	    </div>
-	</div>
- 	 <div class="control-group">
-	    <div class="controls">
-	      <button class="btn" type="submit">Envoyer</button>
-	    </div>
-	 </div>
-</form>

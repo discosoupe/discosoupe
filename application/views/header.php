@@ -1,7 +1,7 @@
 <header>
 	<br />
 	<div class="row">
-		<div class="span2">
+		<div class="span2" align="right">
 			<?php echo img("logo.png", $alt = "logo");?>
 		</div>
 		<div class="span7">

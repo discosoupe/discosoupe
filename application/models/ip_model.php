@@ -25,10 +25,13 @@ class Ip_model extends CI_Model
 	public function verif_ip()
     {
 		return $this->db
-    	->select('ip')
+    	->select('idip')
+		->from($this->table)
     	->where('ip', $this->session->userdata('ip_address'))
-		->where('valide', TRUE)
-		->count_all_results($this->table);
+		->where('valide', 1)
+		->get()
+		->result();
+		//->count_all_results($this->table);
     }
 	
 }
