@@ -21,9 +21,7 @@ class Partenaire_model extends CI_Model
     {
 		return $this->db->select('*')
 			->from($this->table)
-			->where('date >', 'NOW()')
 			->limit($nb, $debut)
-			->order_by('id', 'desc')
 			->get()
 			->result();
     }

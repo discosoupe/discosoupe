@@ -7,8 +7,9 @@
 <?php foreach($css as $url): ?>
         <link rel="stylesheet" type="text/css" media="screen" href="<?php echo $url; ?>" />
 <?php endforeach; ?>
-  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  	<?php foreach($ext as $url_ext): ?>
+        <script src="<?php echo $url_ext; ?>"></script> 
+	<?php endforeach; ?>
     </head>
  
     <body>
@@ -19,7 +20,7 @@
 <?php foreach($js as $url): ?>
         <script type="text/javascript" src="<?php echo $url; ?>"></script> 
 <?php endforeach; ?>
- 
+
     </body>
  	
 </html>

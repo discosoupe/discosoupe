@@ -105,6 +105,12 @@ class Layout
 		return false;
 	}
 	
+	public function ajouter_ext($nom)
+	{
+		$this->var['ext'][] = ext_url($nom);
+		return true;
+	}
+	
 	public function set_theme($theme)
 	{
 		if(is_string($theme) AND !empty($theme) AND file_exists('./application/themes/' . $theme . '.php'))

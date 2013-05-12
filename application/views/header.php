@@ -9,10 +9,10 @@
 			<h3>Le recyclage du gaspillage, la propriété du recyclage</h3>
 		</div>
 		<div class="span3">
-			<i class="icon-envelope"></i> Contact :
-			<?php echo img("u70_normal.png", $alt = "co");?>
+			<a href="mailto:discosoupe@gmail.com"><i class="icon-envelope"></i> Contact</a> :
+			<?php echo '<a href="https://www.facebook.com/DiscoSoupe">'.img("u70_normal.png", $alt = "co").'</a>';?>
 			<?php echo img("u72_normal.png", $alt = "co");?>
-			<?php echo img("u74_normal.png", $alt = "co");?>
+			<?php echo '<a href="http://vimeo.com/39596405">'.img("u74_normal.png", $alt = "co").'</a>';?>
 			<?php echo img("u76_normal.png", $alt = "co");?>
 			<?php echo img("u78_normal.png", $alt = "co");?>
 		</div>

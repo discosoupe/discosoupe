@@ -8,7 +8,7 @@
 	  <div class="tab-content">
 	    <div class="tab-pane active" id="tab1">
 			<div class="well">
-				<form class="form-horizontal" method="post" action="">
+				<form class="form-horizontal" method="post" action="<?php echo site_url('valideagenda');?>" onsubmit='return verif_champs();'>
 					<div class="input-append">
 						<div class="control-group">
 							<script>
@@ -18,7 +18,7 @@
 							</script>
 							<label class="control-label" for="Date">Date :</label>
 						    <div class="controls">
-						        <input id="date" type="date" name="date" value="<?php echo set_value('date'); ?>" />
+						        <input id="date" type="text" name="date" value="<?php echo set_value('date'); ?>" />
 						        <h5><?php echo form_error('date'); ?></h5>
 						    </div>
 						</div>
@@ -36,7 +36,7 @@
 						<div class="control-group"> 
 							<label class="control-label" for="adresse">Adresse de contact :</label>
 						    <div class="controls">
-						      <textarea name="adresse"><?php echo set_value('adresse'); ?></textarea>
+						      <textarea id="adresse" name="adresse"><?php echo set_value('adresse'); ?></textarea>
 						       <h5><?php echo form_error('adresse'); ?></h5>
 						    </div>
 						</div>
@@ -45,7 +45,7 @@
 						<div class="control-group">
 							<label class="control-label" for="evenement">Evènement :</label>
 						    <div class="controls">
-						    	<textarea name="evenement"><?php echo set_value('evenement'); ?></textarea>
+						    	<textarea id="evenement" name="evenement"><?php echo set_value('evenement'); ?></textarea>
 					    		<h5><?php echo form_error('evenement'); ?></h5>
 						    </div>
 						</div>
@@ -63,7 +63,7 @@
 						<div class="control-group"> 
 							<label class="control-label" for="contact">Contact :</label>
 						    <div class="controls">
-						      <input type="text" id="contact"  name="contact" value="<?php echo set_value('contact'); ?>" >
+						      <input type="text" id="contact" name="contact" value="<?php echo set_value('contact'); ?>" >
 						       <h5><?php echo form_error('contact'); ?></h5>
 						    </div>
 						</div>
@@ -72,7 +72,7 @@
 						<div class="control-group"> 
 							<label class="control-label" for="email">Email :</label>
 						    <div class="controls">
-						      <input type="text" id="email"  name="email" value="<?php echo set_value('email'); ?>" >
+						      <input type="text" id="email" name="email" value="<?php echo set_value('email'); ?>" >
 						       <h5><?php echo form_error('email'); ?></h5>
 						    </div>
 						</div>
@@ -87,5 +87,17 @@
 	    </div>
 	  </div>
 	</div>
-	
 </div>
+
+<script>
+	function verif_champs(){
+		if(document.getElementById('date').value == "" || document.getElementById('lieu').value == "" || document.getElementById('adresse').value == "" || document.getElementById('evenement').value == "" || document.getElementById('telephone').value == "" || document.getElementById('contact').value == "" || document.getElementById('email').value == ""){
+			alert('Tous les champs sont obligatoires !');
+			return false
+		}
+		else{
+			return true;
+		}
+	}
+	
+</script>

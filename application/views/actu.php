@@ -1,1 +1,1 @@
-<h1>Toute l'actu</h1>
+<h1>Toute l'actualité ici</h1>

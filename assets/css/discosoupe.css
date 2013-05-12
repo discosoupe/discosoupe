@@ -19,3 +19,13 @@ h5{
     border: 5px solid white;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
+
+a{
+	color: darkgreen;
+	text-decoration:none; 	
+}
+
+a:hover{
+	color: green;
+	text-decoration:none; 	
+}

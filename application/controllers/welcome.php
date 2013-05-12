@@ -47,6 +47,8 @@ class Welcome extends CI_Controller {
 		$this->layout->ajouter_css('bootstrap/css/bootstrap.min');
 		$this->layout->ajouter_css('bootstrap/css/bootstrap-responsive.min');
 		$this->layout->ajouter_css('discosoupe');
+		$this->layout->ajouter_ext('http://code.jquery.com/jquery-1.9.1.js');
+		$this->layout->ajouter_ext('http://code.jquery.com/ui/1.10.3/jquery-ui.js');
 		$this->layout->ajouter_js('bootstrap/js/bootstrap.min');
 		$this->layout->ajouter_js('bootstrap/js/bootstrap-tab');
 		$this->layout->ajouter_js('bootstrap/js/bootstrap-dropdown');
@@ -57,52 +59,24 @@ class Welcome extends CI_Controller {
     	$this->action_model->save_action('accueil', $this->id_ip);
     	$this->load->library('form_validation');
   
-	    $this->form_validation->set_rules('date', '"Format de date"', 'trim|required|exact_length[16]|xss_clean');
-	    $this->form_validation->set_rules('lieu', '"Lieu"', 'trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('adresse', '"Adresse"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
-	    $this->form_validation->set_rules('evenement', '"Evènement"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('telephone', '"Téléphone"', 'trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
-	    $this->form_validation->set_rules('contact', '"Contact"', 'trim|required|min_length[5]|alpha_dash|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('email', '"Email"', 'trim|required|min_length[5]|encode_php_tags|xss_clean|valid_email');
+		$data['user_ip'] = $this->idip;
+			
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->ajouter_css('jquery-ui');
+		$this->layout->ajouter_css('jquery-ui-timepicker-addon');
+		$this->layout->ajouter_js('bootstrap/js/bootstrap-transition');
+		$this->layout->ajouter_js('bootstrap/js/bootstrap-carousel');
+		$this->layout->ajouter_js('jquery-ui-sliderAccess');
+		$this->layout->ajouter_js('jquery-ui-timepicker-addon');
+		$this->layout->ajouter_js('activ_carousel');
+		$this->layout->set_titre('Accueil');
+		//$this->layout->set_theme('disco');
 		
-		if($this->form_validation->run())
-	    {
-	    	if($this->input->post('validation') == 'creerdisco')
-			{
-		        $this->action_model->save_action('annonce disco', $this->id_ip);
-		        $date = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
-				$lieu = $this->input->post('lieu');
-				$adresse = $this->input->post('adresse');
-				$evenement = $this->input->post('evenement');
-				$telephone = $this->input->post('telephone');
-				$contact = $this->input->post('contact');
-				$email = $this->input->post('email');
-				$this->load->model('discosoupe_model');
-				$this->discosoupe_model->save_discosoupe($date, $lieu, $adresse, $evenement, $telephone, $contact, $email, $this->id_ip);
-		    	$this->agenda();
-			}
-		}
-		else
-	    {
-			$data['user_ip'] = $this->idip;
-			
-			$this->load->library('layout');
-			$this->load_assets();
-			$this->layout->ajouter_css('jquery-ui');
-			$this->layout->ajouter_css('jquery-ui-timepicker-addon');
-			$this->layout->ajouter_js('bootstrap/js/bootstrap-transition');
-			$this->layout->ajouter_js('bootstrap/js/bootstrap-carousel');
-			$this->layout->ajouter_js('jquery-ui-sliderAccess');
-			$this->layout->ajouter_js('jquery-ui-timepicker-addon');
-			$this->layout->ajouter_js('activ_carousel');
-			$this->layout->set_titre('Accueil');
-			//$this->layout->set_theme('disco');
-			
-			$this->layout->views('header', $data)
-				->views('nav')
-				->views('carousel')
-				->view('accueil');
-		}
+		$this->layout->views('header', $data)
+			->views('nav')
+			->views('carousel')
+			->view('accueil');
     }
 
 	public function annoncepartenaire()
@@ -110,11 +84,11 @@ class Welcome extends CI_Controller {
     	$this->action_model->save_action('annonce partenaire', $this->id_ip);
     	$this->load->library('form_validation');
   
-		$this->form_validation->set_rules('entreprise_partenaire', '"Entreprise"', 'trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
-	    $this->form_validation->set_rules('adresse_partenaire', '"Adresse"', 'trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
+		$this->form_validation->set_rules('entreprise_partenaire', '"Entreprise"', 'trim|required|min_length[5]|max_length[52]|encode_php_tags|xss_clean');
+	    $this->form_validation->set_rules('adresse_partenaire', '"Adresse"', 'trim|required|min_length[5]|max_length[52]|encode_php_tags|xss_clean');
     	$this->form_validation->set_rules('localisation_partenaire', '"Localisation"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
-	    $this->form_validation->set_rules('contact_partenaire', '"Contact"', 'trim|required|min_length[5]|alpha_dash|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('telephone_partenaire', '"Téléphone"', 'trim|required|min_length[5]|max_length[52]|alpha_dash|encode_php_tags|xss_clean');
+	    $this->form_validation->set_rules('contact_partenaire', '"Contact"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
+    	$this->form_validation->set_rules('telephone_partenaire', '"Téléphone"', 'trim|required|min_length[5]|max_length[52]|encode_php_tags|xss_clean');
 	    $this->form_validation->set_rules('email_partenaire', '"Email"', 'trim|required|min_length[5]|encode_php_tags|xss_clean|valid_email');
 		$this->form_validation->set_rules('choix_partenaire', '"Choix"', 'trim|required|exact_length[1]|xss_clean');
 		
@@ -132,7 +106,7 @@ class Welcome extends CI_Controller {
 				$choix_partenaire = $this->input->post('choix_partenaire');
 				$this->load->model('partenaire_model');
 				$this->partenaire_model->save_partenaire($entreprise_partenaire, $adresse_partenaire, $localisation_partenaire, $contact_partenaire, $telephone_partenaire, $email_partenaire, $choix_partenaire, $this->id_ip);
-		    	$this->partenaire();
+		    	redirect('/partenaire');
 			}
 		}
 		else
@@ -154,6 +128,88 @@ class Welcome extends CI_Controller {
 		}
     }
 	
+	public function valideagenda()
+    {
+    	
+		$this->action_model->save_action('valideagenda', $this->id_ip);
+		$this->load->library('form_validation');
+		
+    	$this->form_validation->set_rules('lat', '"Latitude"', 'xss_clean');
+		$this->form_validation->set_rules('date', '"Format de date"', 'trim|required|max_length[25]|xss_clean');
+	    $this->form_validation->set_rules('lieu', '"Lieu"', 'trim|required|min_length[5]|max_length[52]|encode_php_tags|xss_clean');
+    	$this->form_validation->set_rules('adresse', '"Adresse"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
+	    $this->form_validation->set_rules('evenement', '"Evènement"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
+    	$this->form_validation->set_rules('telephone', '"Téléphone"', 'trim|required|min_length[5]|max_length[52]|encode_php_tags|xss_clean');
+	    $this->form_validation->set_rules('contact', '"Contact"', 'trim|required|min_length[5]|encode_php_tags|xss_clean');
+    	$this->form_validation->set_rules('email', '"Email"', 'trim|required|min_length[5]|encode_php_tags|xss_clean|valid_email');
+		
+		$data['date'] = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
+		$data['lieu'] = $this->input->post('lieu');
+		$data['adresse'] = $this->input->post('adresse');
+		$data['evenement'] = $this->input->post('evenement');
+		$data['telephone'] = $this->input->post('telephone');
+		$data['contact'] = $this->input->post('contact');
+		$data['email'] = $this->input->post('email');
+		
+		require_once('recaptchalib.php');
+				
+		// Get a key from https://www.google.com/recaptcha/admin/create
+		$publickey = "6Lc6vs0SAAAAAC9hHEbNlNG8bzxP65eqMxqh3WO3";
+		$privatekey = "6Lc6vs0SAAAAAEFsAQjkNKrFqqCZZwYkoc_YKbzJ";
+		
+		# the response from reCAPTCHA
+		$resp = null;
+		# the error code from reCAPTCHA, if any
+		$error = null;
+		
+		# was there a reCAPTCHA response?
+		if (isset($_POST["recaptcha_response_field"])) {
+		        $resp = recaptcha_check_answer ($privatekey,
+		                                        $_SERVER["REMOTE_ADDR"],
+		                                        $_POST["recaptcha_challenge_field"],
+		                                        $_POST["recaptcha_response_field"]);
+		
+		        if ($resp->is_valid) {
+		        	if($this->form_validation->run()){
+						if($this->input->post('validation') == 'creedisco')
+					    {
+					        $this->action_model->save_action('annonce disco', $this->id_ip);
+					        $date = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
+							$lieu = $this->input->post('lieu');
+							$adresse = $this->input->post('adresse');
+							$evenement = $this->input->post('evenement');
+							$telephone = $this->input->post('telephone');
+							$contact = $this->input->post('contact');
+							$email = $this->input->post('email');
+							$latitude = $this->input->post('lat');
+							$this->load->model('discosoupe_model');
+							$this->discosoupe_model->save_discosoupe($date, $lieu, $contact, $evenement, $adresse, $telephone, $email, $this->id_ip, $latitude);
+							
+							$this->load->library('layout');
+							$this->load_assets();
+							$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyByHqIM6t2XjMg6PMCTT11-4IGAT43Angc&sensor=false');
+							$this->layout->set_titre('Agenda');
+					
+							redirect('/agenda');
+						}
+					} 
+		        } else {
+		                # set the error code so that we can display it
+		                $error = $resp->error;
+		        }
+		}
+		$data['recaptcha'] = recaptcha_get_html($publickey, $error);
+		
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyByHqIM6t2XjMg6PMCTT11-4IGAT43Angc&sensor=false');
+		$this->layout->set_titre('Valide Evènement');
+
+		$this->layout->views('header', $data)
+			->views('nav')
+			->view('valideagenda');
+    }
+	
 	public function actu()
     {
     	$this->action_model->save_action('actu', $this->id_ip);
@@ -171,20 +227,27 @@ class Welcome extends CI_Controller {
     	$this->action_model->save_action('agenda', $this->id_ip);
 		$this->load->library('layout');
 		$this->load_assets();
+		$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyByHqIM6t2XjMg6PMCTT11-4IGAT43Angc&sensor=false');
 		$this->layout->set_titre('Evenement et agenda');
 		
 		$this->load->model('discosoupe_model');
-		/*
-		$discosoupe = $this->discosoupe_model->get_discosoupe();
-		foreach ($discosoupe as $disco) {
-			echo "<br />date : ".$disco->date;
-			echo "<br />ville : ".$disco->date;
-		}
-		 * */
 		$data['discosoupe'] = $this->discosoupe_model->get_discosoupe();
+		
 		$this->layout->views('header', $data)
 			->views('nav')
 			->view('agenda');
+    }
+	
+	public function presse()
+    {
+    	$this->action_model->save_action('presse', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('Presse');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('presse');
     }
 	
 	public function association()
@@ -197,6 +260,54 @@ class Welcome extends CI_Controller {
 		$this->layout->views('header')
 			->views('nav')
 			->view('association');
+    }
+	
+	public function concept()
+    {
+    	$this->action_model->save_action('concept', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('Concept');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('concept');
+    }
+	
+	public function historique()
+    {
+    	$this->action_model->save_action('historique', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('Historique');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('historique');
+    }
+	
+	public function valeur()
+    {
+    	$this->action_model->save_action('valeur', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('Valeur');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('valeur');
+    }
+	
+	public function localisation()
+    {
+    	$this->action_model->save_action('localisation', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('localisation');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('localisation');
     }
 	
 	public function gaspillage()
@@ -223,59 +334,91 @@ class Welcome extends CI_Controller {
 			->view('discosoupe');
     }
 	
+	public function recette()
+    {
+    	$this->action_model->save_action('recette', $this->id_ip);
+        $this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('recette');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('recette');
+    }
+	
+	public function tutoriel()
+    {
+    	$this->action_model->save_action('tutoriel', $this->id_ip);
+        $this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('tutoriel');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('tutoriel');
+    }
+
+	public function toolbox()
+    {
+    	$this->action_model->save_action('toolbox', $this->id_ip);
+        $this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('toolbox');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('toolbox');
+    }
+	
+	public function atelier()
+    {
+    	$this->action_model->save_action('atelier', $this->id_ip);
+        $this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('atelier');
+		//$this->layout->set_theme('disco');
+		$this->layout->views('header')
+			->views('nav')
+			->view('atelier');
+    }
+	
 	public function partenaire()
     {
     	$this->action_model->save_action('partenaire', $this->id_ip);
 		$this->load->library('layout');
 		$this->load_assets();
 		$this->layout->set_titre('espace partenaires');
-		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		
+		$this->load->model('partenaire_model');
+		$data['partenaire'] = $this->partenaire_model->get_partenaire();
+
+		$this->layout->views('header', $data)
 			->views('nav')
 			->view('partenaire');
     }
 	
-	public function localisation()
+	public function aide()
     {
-    	$this->action_model->save_action('localisation', $this->id_ip);
-		$data = array();
-		
-		//Geolocalisation du guest
-		
-		require_once(APPPATH.'../'.geo_url('geoipcity.inc'));
-		require_once(APPPATH.'../'.geo_url('geoipregionvars.php'));
-		
-		$gi = geoip_open(realpath(APPPATH.'../'.geo_url("GeoLiteCity.dat")),GEOIP_STANDARD);
-		 
-		$record = geoip_record_by_addr($gi, $this->session->userdata('ip_address'));
-		
-		$data['record'] = $record;
-		
-		geoip_close($gi);
-		
-		//google map
-		
-		$this->load->library('googleMapAPI');
-		//(2) On crée une nouvelle carte; Ici, notre carte sera $map.
-		$map = new GoogleMapAPI('map');
-		 
-		//(3) On ajoute la clef de Google Maps.
-		$map->setAPIKey('AIzaSyCQQRKyKL2B7In9YZNYkxvs2hdeux0j3ME');
-		     
-		//(4) On ajoute les caractéristiques que l'on désire à notre carte.
-		$map->setWidth("800px");
-		$map->setHeight("500px");
-		$map->setCenterCoords ('2', '48');
-		$map->setZoomLevel (5);
-		
-		$data['map'] = $map;
-		
+    	$this->action_model->save_action('aide', $this->id_ip);
 		$this->load->library('layout');
 		$this->load_assets();
-		$this->layout->set_titre('localisation');
-		$this->layout->views('header', $data)
+		$this->layout->set_titre('comment nous aider');
+		
+		$this->layout->views('header')
 			->views('nav')
-			->view('localisation');
+			->view('aide');
+    }
+	
+	public function dossier()
+    {
+    	$this->action_model->save_action('dossier', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('dossier de presse');
+		
+		$this->layout->views('header')
+			->views('nav')
+			->view('dossier');
     }
 }
 

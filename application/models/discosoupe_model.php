@@ -4,7 +4,7 @@ class Discosoupe_model extends CI_Model
 {
 	private $table = 'discosoupe';
 	
-	public function save_discosoupe($date, $ville, $contact, $evenement, $adresse, $telephone, $email, $id_ip)
+	public function save_discosoupe($date, $ville, $contact, $evenement, $adresse, $telephone, $email, $id_ip, $latitude)
     {
 		$timestamp = $date;
 		$this->db->set('date', $timestamp);
@@ -15,6 +15,8 @@ class Discosoupe_model extends CI_Model
 		$this->db->set('telephone', $telephone);
 		$this->db->set('email', $email);
 		$this->db->set('idipdiscosoupe',  $id_ip);
+		$this->db->set('valide', 1);
+		$this->db->set('latitude',  $latitude);
 		return $this->db->insert($this->table);
     }
 	

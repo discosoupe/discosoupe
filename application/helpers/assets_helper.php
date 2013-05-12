@@ -15,6 +15,14 @@ if ( ! function_exists('js_url'))
         return base_url() . 'assets/javascript/' . $nom . '.js';
     }
 }
+
+if ( ! function_exists('ext_url'))
+{
+    function ext_url($nom)
+    {
+        return $nom;
+    }
+}
  
 if ( ! function_exists('img_url'))
 {
