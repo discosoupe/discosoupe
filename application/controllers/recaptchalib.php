@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /*
  * This is a PHP library that handles calling reCAPTCHA.
  *    - Documentation and latest version

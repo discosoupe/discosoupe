@@ -2,8 +2,8 @@
 
 	<div class="tabbable"> <!-- Only required for left/right tabs -->
 	  <ul class="nav nav-tabs">
-	    <li class="active"><a href="#tab1">Annonces ta disco soupe</a></li>
-	    <li><a href="<?php echo site_url('annoncepartenaire');?>">Annonces ton partenariat</a></li>
+	    <li class="active"><a href="#tab1">Annonce ta disco soupe</a></li>
+	    <!-- <li><a href="<?php echo site_url('annoncepartenaire');?>">Annonces ton partenariat</a></li> -->
 	  </ul>
 	  <div class="tab-content">
 	    <div class="tab-pane active" id="tab1">
@@ -59,7 +59,7 @@
 						    </div>
 						</div>
 					</div>
-					<div class="input-append">
+					<div class="input-prepend">
 						<div class="control-group"> 
 							<label class="control-label" for="contact">Contact :</label>
 						    <div class="controls">
@@ -77,11 +77,13 @@
 						    </div>
 						</div>
 					</div>
-				 	 <div class="control-group">
-					    <div class="controls">
-					      <button class="btn btn-success" type="submit" name="validation" value="creerdisco">Envoyer</button>
-					    </div>
-					 </div>
+					<div class="input-prepend">
+						<div class="control-group">
+						    <div class="controls">
+								<button class="btn btn-success" type="submit" name="validation" value="creerdisco">Envoyer</button>
+						    </div>
+						</div>
+					</div>
 				</form>
 			</div>
 	    </div>
