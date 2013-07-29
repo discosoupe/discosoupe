@@ -26,7 +26,7 @@ $config['base_url']	= 'http://localhost/discosoupe/';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php/welcome';
+$config['index_page'] = 'index.php/fr';
 
 /*
 |--------------------------------------------------------------------------

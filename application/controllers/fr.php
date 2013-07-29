@@ -1,6 +1,6 @@
 <?php 
 
-class Welcome extends CI_Controller {
+class Fr extends CI_Controller {
 	private $id_ip;
 
 	/**
@@ -281,6 +281,8 @@ class Welcome extends CI_Controller {
     	$this->action_model->save_action('actu', $this->id_ip);
 		
 		$this->load->model('article_model');
+		$this->load->model('theme_model');
+		$this->load->model('lienutile_model');
 		if ($this->session->userdata('is_logged_in') == 'ok'){
 			$this->load->library('form_validation');
 			
@@ -293,48 +295,201 @@ class Welcome extends CI_Controller {
 		    	if($this->input->post('creerarticle') == 'ajouter')
 				{
 		    		$this->action_model->save_action('creer article', $this->id_ip);
-					
-					$config['upload_path'] = './assets/images/uploads/';
-					$config['allowed_types'] = 'gif|jpg|png';
-					$config['max_size']	= '1000';
-					$config['max_width']  = '1024';
-					$config['max_height']  = '1068';
-					$config['file_name'] = 'testeur'; 
-					
-					$this->load->library('upload', $config);
-					
-					$result = array('upload_data' => $this->upload->data());
-					
-					if ( ! $this->upload->do_upload())
+					$nom_fichier = NULL;
+					if(isset($_FILES['userfile']))
 					{
-						$error = array('error' => $this->upload->display_errors());
-						echo 'echec de l\'enregistrement du fichier';
-					 	var_dump($error);
-					}	
-
+						$config['upload_path'] = './assets/images/uploads/';
+						$config['allowed_types'] = 'gif|jpg|png';
+						$config['max_size']	= '1000';
+						$config['max_width']  = '1024';
+						$config['max_height']  = '1068';
+						$ancien_nom = $_FILES['userfile']['name'];
+						$nom_fichier = time().'.'.end(explode(".", $ancien_nom));
+						$config['file_name'] = $nom_fichier; 
+						
+						$this->load->library('upload', $config);
+						
+						$result = array('upload_data' => $this->upload->data());
+						if ( ! $this->upload->do_upload())
+						{
+							$error = array('error' => $this->upload->display_errors());
+						 	$this->action_model->save_action('echec sauvegarde fichier', $this->id_ip);
+							$nom_fichier = NULL;
+						}
+					}
+					
+					$dossier = './assets/pj/';
+					$ancien_nom_pj = $_FILES['pj']['name'];
+					$nom_fichier_pj = time().'.'.end(explode(".", $ancien_nom_pj));
+					$nom_pj = NULL;
+					if(isset($_FILES['pj']))
+					{
+						if(move_uploaded_file($_FILES['pj']['tmp_name'], $dossier . $nom_fichier_pj)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+					     {
+					     	$nom_pj = $nom_fichier_pj;
+					     	//echo 'Upload effectué avec succès !';
+					     }
+					}
+						
 					$titre = $this->input->post('titre');
 					$date = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
 					$description = $this->input->post('description');
-					$this->article_model->save_article($titre, $date, $description);
+					$id = $this->article_model->save_article($titre, $date, $description, $nom_fichier, $nom_pj);
+					if($this->input->post('dataexterne')!=NULL && $this->input->post('dataexterne')!=""){
+						$this->load->model('lienexterne_model');
+						$lienexternes = explode(",", $this->input->post('dataexterne'));
+						//todo save_lienexterne avec $this->db->insert_batch
+						foreach ($lienexternes as $lienexterne) {
+							$this->lienexterne_model->save_lienexterne($lienexterne, $lienexterne, $id);
+						}
+					}
+					if($this->input->post('datatheme')!=NULL && $this->input->post('datatheme')!=""){
+						$themes = explode(",", $this->input->post('datatheme'));
+						//todo save_theme avec $this->db->insert_batch
+						foreach ($themes as $theme) {
+							$this->theme_model->save_theme($theme, $id);
+						}
+					}
 				}
 			}	
 		}
-		$data['article'] = $this->article_model->get_article();
-						
+		$data['page'] = NULL;
+		if($this->input->get('id')){
+			$data['article'] = $this->article_model->get_article_by_id($this->input->get('id'));
+		}
+		elseif($this->input->get('theme')){
+			$data['article'] = $this->article_model->get_article_by_theme($this->input->get('theme'));
+		}
+		elseif($this->input->get('search')){
+			$data['article'] = $this->article_model->get_article_by_search($this->input->get('search'));
+		}
+		elseif($this->input->get('page')){
+			$data['article'] = $this->article_model->get_article_by_page($this->input->get('page')-1);
+			$data['page'] = $this->article_model->get_nb_page();
+		}
+		else{
+			$data['article'] = $this->article_model->get_article();
+			$data['page'] = $this->article_model->get_nb_page();
+		}
+		$data['archive'] = $this->article_model->get_archive();
+		$data['allthemes'] = $this->theme_model->get_theme();
+		$data['lienutile'] = $this->lienutile_model->get_lienutile();
+				
+		$data['convertjour'] = array("Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi");
+		$data['convertmois'] = array("","Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
+		
 		$this->load->library('layout');
+		
+		$this->layout->ajouter_js('bootstrap/js/bootstrap-typeahead');
 		$this->load_assets();
 		$this->layout->ajouter_css('jquery-ui');
 		$this->layout->ajouter_css('jquery-ui-timepicker-addon');
 		$this->layout->ajouter_css('bootstrap/css/bootstrap-fileupload.min');
+		$this->layout->ajouter_css('bootstrap/css/bootstrap-tagmanager');
+		$this->layout->ajouter_css('bootstrap/css/bootstrap_2_1.min.css');
+		
+		$this->layout->ajouter_js('bootstrap/js/bootstrap-tagmanager');
 		$this->layout->ajouter_js('bootstrap/js/bootstrap-fileupload.min');
 		$this->layout->ajouter_js('jquery-ui-sliderAccess');
 		$this->layout->ajouter_js('jquery-ui-timepicker-addon');
+		
 		$this->layout->set_titre('Toutes l\'Actualité');
+		
 		//$this->layout->set_theme('disco');
 		$this->layout->views('header')
 			->views('nav')
 			->view('actu', $data);
     }
+    
+    public function majarticle()
+    {
+		if ($this->session->userdata('is_logged_in') == 'ok'){
+			$this->load->model('article_model');
+			$this->load->model('theme_model');
+			$this->load->model('lienexterne_model');
+			
+			if($this->input->get('id')){
+				if($this->input->post('modifier'.$this->input->get('id')) == 'modifier'){
+					$this->action_model->save_action('maj actu', $this->id_ip);
+					
+					$titre = $this->input->post('titre'.$this->input->get('id'));
+					$date = date('Y-m-d H:i:s', strtotime($this->input->post('date'.$this->input->get('id'))));
+					$description = $this->input->post('description'.$this->input->get('id'));
+					$image = NULL;
+					$piecejointe = NULL;
+					
+					//image
+					if(isset($_FILES['userfile']))
+					{
+						$dossierimage = './assets/images/uploads/';
+						$ancien_image = $_FILES['userfile']['name'];
+						$nom_fichier_image = time().'.'.end(explode(".", $ancien_image));
+						if(move_uploaded_file($_FILES['userfile']['tmp_name'], $dossierimage . $nom_fichier_image)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+					     {
+					     	$image = $nom_fichier_image;
+					     }
+					}
+					
+					//piece jointe
+					if(isset($_FILES['pj'.$this->input->get('id')]))
+					{
+						$dossier = './assets/pj/';
+						$ancien_nom_pj = $_FILES['pj'.$this->input->get('id')]['name'];
+						$nom_fichier_pj = time().'.'.end(explode(".", $ancien_nom_pj));
+						$piecejointe = NULL;
+						if(move_uploaded_file($_FILES['pj'.$this->input->get('id')]['tmp_name'], $dossier . $nom_fichier_pj)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+					     {
+					     	$piecejointe = $nom_fichier_pj;
+					     	//echo 'Upload effectué avec succès !';
+					     }
+					}
+					$this->article_model->update_article($this->input->get('id'), $titre, $date, $description, $image, $piecejointe);
+					
+					if($this->input->post('dataexterne'.$this->input->get('id'))!=NULL && $this->input->post('dataexterne'.$this->input->get('id'))!=""){
+						$this->lienexterne_model->delete_lienexterne_by_idarticle($this->input->get('id'));
+						$lienexternes = explode(",", $this->input->post('dataexterne'.$this->input->get('id')));
+						//todo save_lienexterne avec $this->db->insert_batch
+						foreach ($lienexternes as $lienexterne) {
+							$this->lienexterne_model->save_lienexterne($lienexterne, $lienexterne, $this->input->get('id'));
+						}
+					}
+					if($this->input->post('datatheme'.$this->input->get('id'))!=NULL && $this->input->post('datatheme'.$this->input->get('id'))!=""){
+						$this->theme_model->delete_theme_by_idarticle($this->input->get('id'));
+						$themes = explode(",", $this->input->post('datatheme'.$this->input->get('id')));
+						//todo save_theme avec $this->db->insert_batch
+						foreach ($themes as $theme) {
+							$this->theme_model->save_theme($theme, $this->input->get('id'));
+						}
+					}
+				}
+				if($this->input->post('supprimer'.$this->input->get('id')) == 'supprimer'){
+					$this->action_model->save_action('supprimer actu', $this->id_ip);
+					$this->theme_model->delete_theme_by_idarticle($this->input->get('id'));
+					$this->lienexterne_model->delete_lienexterne_by_idarticle($this->input->get('id'));
+					$this->article_model->delete_article($this->input->get('id'));
+				}
+			}
+    		redirect('/actu');
+		}
+    }
+
+	public function ajoutlienutile()
+	{
+		if ($this->session->userdata('is_logged_in') == 'ok'){
+			if($this->input->post('ajoutlienutile') == 'ajoutlienutile'){
+				$this->load->model('lienutile_model');
+				$urllienutile = $this->input->post('urllienutile');
+				$titrelienutile = $this->input->post('titrelienutile');
+				$descriptionlienutile = $this->input->post('descriptionlienutile');
+				$this->lienutile_model->save_lienutile($titrelienutile, $descriptionlienutile, $urllienutile);
+			}
+			if($this->input->get('id')){
+				$this->load->model('lienutile_model');
+				$this->lienutile_model->delete_lienutile($this->input->get('id'));
+			}
+			redirect('/actu');
+		}
+	}
 	
     public function agenda()
     {
@@ -346,6 +501,9 @@ class Welcome extends CI_Controller {
 		
 		$this->load->model('discosoupe_model');
 		$data['discosoupe'] = $this->discosoupe_model->get_discosoupe();
+		
+		$data['convertjour'] = array("Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi");
+		$data['convertmois'] = array("","Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
 		
 		$this->layout->views('header', $data)
 			->views('nav')

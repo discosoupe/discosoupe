@@ -1,4 +1,4 @@
-<!DOCTYPE html"> 
+<!DOCTYPE html> 
 <html lang="fr" > 
     <head>
         <title><?php echo $titre; ?></title>

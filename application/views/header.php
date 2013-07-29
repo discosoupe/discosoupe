@@ -16,7 +16,7 @@
 			<?php }else{ ?>
 			<form action="" method="post" class="form-inline" style="margin-top: 20px; margin-bottom: 8px">
 				<input name="login" type="text" class="input-small" placeholder="log in" />
-				<input name="password" type="text" class="input-small" placeholder="password" />
+				<input name="password" type="password" class="input-small" placeholder="password" />
 				<button class="btn" type="submit"><i class="icon-user"></i></button>
 			</form>
 			<?php } ?>

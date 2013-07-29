@@ -82,8 +82,9 @@
 				</div>
 				<?php
 					foreach ($discosoupe as $disco) {
+						$timestamp = strtotime($disco->date);
 						echo "<b>".$disco->adresse." - ".$disco->ville."<br />".
-						date('d F à G:i' , strtotime($disco->date))."</b><br />".
+						$convertjour[date('w', $timestamp)]." ".date('d', $timestamp)." ".$convertmois[date('n', $timestamp)]." ".date('Y', $timestamp)."</b><br />".
 						$disco->evenement."<br />
 						<div align='right'><a onclick=\"document.getElementById('address').value='".$disco->adresse.", ".$disco->ville."';codeVoyager();\">> Localiser sur la carte</a></div>
 						<hr />";
