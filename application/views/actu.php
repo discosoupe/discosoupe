@@ -242,9 +242,9 @@
 										<?php echo img("u78_normal.png", $alt = "co");?>
 					        		</td>
 					        		<td align="right">
-					        			Liens : 
 					        			<?php
 							        		if($art->url){
+							        			echo 'Liens : ';
 							        			foreach ($art->url as $url) {
 													echo '<a href="http://'.$url.'">'.$url.'</a> ';
 												}

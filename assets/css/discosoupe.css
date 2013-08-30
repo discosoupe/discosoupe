@@ -3,6 +3,12 @@ body{
 	background-color: #F4F4F4;
 }
 
+header{
+	height:135px;
+	background-image: url('../images/temp/headerbackground.png');
+	background-repeat:no-repeat;
+}
+
 h1{
 	color: #7A4C61;
 }
@@ -31,8 +37,13 @@ h5{
 	padding: 20px;
 }
 
+.carte2{
+	background-color: white;
+	box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.1);
+}
+
 #myCarousel{
-	width: 1007px;
+	margin-right: 20px;
 }
 
 .carousel-inner {

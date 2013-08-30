@@ -2,8 +2,6 @@
 	<div class="fondjaune span12">
 		<center><h1>l'agenda et les évènements</h1></center>
 	</div>
-</div>
-<div class="row-fluid">
 	<script>
 		var geocoder;
 		var map;
@@ -68,8 +66,9 @@
 		}
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
-	
-	<table>
+</div>
+<div class="row-fluid">
+	<table class="carte span12">
 		<tr>
 			<td valign="top">
 				<div id="map-canvas" style="width: 600px; height: 500px; margin: 20px auto;"></div>
