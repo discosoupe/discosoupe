@@ -1,32 +1,55 @@
+body{
+	color: #7A4C61;
+	background-color: #F4F4F4;
+}
+
 h1{
-	color: darkgreen;
+	color: #7A4C61;
+}
+
+h2{
+	color: #CAD91A;
 }
 
 h3{
-	color: darkorange;
+	color: #7A4C61;
 }
 
 h5{
-	color: darkred;
+	color: #7A4C61;
+}
+
+#contenu{
+	width:1024px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.carte{
+	background-color: white;
+	box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.1);
+	padding: 20px;
 }
 
 #myCarousel{
-	width: 1000px;
+	width: 1007px;
 }
 
 .carousel-inner {
     border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px;
     border: 5px solid white;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 a{
-	color: darkgreen;
+	color: #7A4C61;
 	text-decoration:none; 	
 }
 
 a:hover{
-	color: green;
+	color: #CAD91A;
 	text-decoration:none; 	
 }
 
@@ -49,4 +72,37 @@ a:hover{
 	text-indent:60px
 }
 
+.basarticle{
+	background-color: #F1F2F2;
+	text-align: center;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-radius: 5px 5px 5px 5px;
+	-moz-border-radius: 5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px;
+}
 
+.fondjaune{
+	background-color: #CAD91A;
+}
+
+
+.newlabel{
+	font-weight: bold;
+	color: #CAD91A;
+}
+
+.numero{
+	width:65px;
+	height:60px;
+	color:#FFFFFF;
+	font-weight:bold;
+	text-align:center;
+	background-color: #CAD91A;
+	-webkit-border-radius:50px;
+    -moz-border-radius:50px;
+    border-radius:50px;
+    margin: 10px;
+}

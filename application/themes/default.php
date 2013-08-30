@@ -13,7 +13,7 @@
     </head>
  
     <body>
-        <div id="contenu">
+        <div id="contenu" class="container-fluid">
             <?php echo $output; ?>
         </div>
          

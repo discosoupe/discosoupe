@@ -46,8 +46,8 @@ class Fr extends CI_Controller {
     }
 	
 	public function load_assets(){
-		$this->layout->ajouter_css('bootstrap/css/bootstrap.min');
-		$this->layout->ajouter_css('bootstrap/css/bootstrap-responsive.min');
+		$this->layout->ajouter_css('bootstrap/css/bootstrap');
+		$this->layout->ajouter_css('bootstrap/css/bootstrap-responsive');
 		$this->layout->ajouter_css('discosoupe');
 		$this->layout->ajouter_ext('http://code.jquery.com/jquery-1.9.1.js');
 		$this->layout->ajouter_ext('http://code.jquery.com/ui/1.10.3/jquery-ui.js');
@@ -74,6 +74,18 @@ class Fr extends CI_Controller {
 		}
 	}
 		
+	public function example(){
+		$this->load->library('layout');
+		$this->layout->views('header')
+			->view('example');
+	}	
+
+	public function with_js_sdk(){
+		$this->load->library('layout');
+		$this->layout->views('header')
+			->view('with_js_sdk');
+	}
+	
 	public function accueil()
     {
     	$this->action_model->save_action('accueil', $this->id_ip);

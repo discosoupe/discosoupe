@@ -1,9 +1,19 @@
-<!- moteur de recherche à faire -->
-
-<div class="container-fluid">
-	<h1>Actualité</h1>
+<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/fr_FR/all.js#xfbml=1&appId=150299105165119";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+</script>
 	<div class="row-fluid">
-        <div class="span7">
+		<div class="fondjaune span12">
+			<center><h1>Actualités</h1></center>
+		</div>
+	</div>
+	<div class="row-fluid">
+        <div class="carte span8">
         	<?php if ($this->session->userdata('is_logged_in') == 'ok'){ ?>
         	<form method="post" enctype="multipart/form-data">
 				<table>
@@ -149,38 +159,58 @@
     					$alltitrearticle = array_unique(array_merge($alltitrearticle, array_unique(explode(" ", $descriptionsansponctuation))));
     					?>
 						<div id="div<?php echo $art->idarticle; ?>">
-							<h4><a href="<?php echo site_url('actu?id='.$art->idarticle) ?>"><?php echo $art->titre; ?></a>
+							<center>
+							<h2><a href="<?php echo site_url('actu?id='.$art->idarticle) ?>"><?php echo $art->titre; ?></a>
 							<?php if ($this->session->userdata('is_logged_in') == 'ok'){
 								echo '<i id="button'.$art->idarticle.'" class="icon-edit"></i>';
 							}?>
-							</h4>
-				        	<table>
-				        		<tr>
-				        			<td class="span8" valign="top">
-				        				
-				        				<?php 
-					        				$timestamp = strtotime($art->date);
-											echo $convertjour[date('w', $timestamp)]." ".date('d', $timestamp)." ".$convertmois[date('n', $timestamp)]." ".date('Y', $timestamp);
-										?>
-				        				<br /><br />	
-										<?php echo $art->description; ?>
-				        			</td>
-				        			<td width="30"></td>
-				        			<td valign="top"><img alt="" src="<?php echo img_url('uploads/'.$art->image) ?>" width="230"/></td>
-				        		</tr>
-				        	</table>
-				        	<?php
-				        		if($art->url){
-				        	?>
+							</h2>
+							</center>
+							<hr />
+							<center><img alt="" src="<?php echo img_url('uploads/'.$art->image) ?>" width="580"/></center>
 				        	<br />
-				        	<a href="">savoir plus :</a>
+				        	<?php echo $art->description; ?>
 				        	<br /><br />
-						        	<?php foreach ($art->url as $url) {
-										echo '<a href="http://'.$url.'">'.$url.'</a><br />';
-									} ?>
-				        	<?php
-								}
-				        	?>
+				        	<div class="row-fluid">
+				        		<div class="span4 basarticle">
+				        			<table>
+				        				<tr>
+				        					<td>
+				        						<h4>
+								        			<?php 
+								        				$timestamp = strtotime($art->date);
+														//$convertjour[date('w', $timestamp)].
+														echo "<div class='numero'><br />".date('d', $timestamp)."</div></td><td><h4> ".$convertmois[date('n', $timestamp)]." ".date('Y', $timestamp)."</h4>";
+													?>
+												</h4>
+											</td>
+										</tr>
+									</table>
+				        		</div>
+				        		<div class="span4 basarticle">
+				        			<h4>Publié dans :</h4>
+					        		<p class="newlabel">
+					        			<?php
+					        				$nbtheme = count($art->theme);
+											$cpttheme = 0;
+						        			if($art->theme){
+							        			foreach ($art->theme as $theme) {
+							        				$cpttheme = $cpttheme + 1;
+													if($cpttheme == $nbtheme)
+														echo $theme;
+													else
+														echo $theme.', ';
+												}
+											}
+						        		?>
+						        	</p>
+				        		</div>
+				        		<div class="span4 basarticle fondjaune">
+				        			<h4 style="color: #FFFFFF">Partager en ligne</h4>
+				        			<div class="fb-like" data-href="http://discosoupe.org" data-width="350" data-show-faces="false" data-send="false"></div>
+				        		</div>
+				        	</div>
+				        	
 		        			<?php 
 		        				if($art->piecejointe){
 		        			?>
@@ -211,13 +241,16 @@
 										<?php echo img("u76_normal.png", $alt = "co");?>
 										<?php echo img("u78_normal.png", $alt = "co");?>
 					        		</td>
-					        		<td align="right">Thèmes : <?php
-					        			if($art->theme){
-						        			foreach ($art->theme as $theme) {
-												echo $theme.' ';
+					        		<td align="right">
+					        			Liens : 
+					        			<?php
+							        		if($art->url){
+							        			foreach ($art->url as $url) {
+													echo '<a href="http://'.$url.'">'.$url.'</a> ';
+												}
 											}
-										}
-					        		?></td>
+							        	?>
+					        		</td>
 					        	</tr>
 							</table>
 						</div>
@@ -412,11 +445,12 @@
 				}
 		   	?>
 		</div>
-        <div class="span4" style="margin-top: -60">
-        	<h3>Rechercher dans les actualités</h3>
-        	<div class="bordure">
+        <div class="carte span4" style="margin-top: -60">
+        	<h3>Rechercher des articles</h3>
+        	<hr />
+        	<div>
         		<form class="form-search" method="get">
-        			<input id="recherchetout" name="search" type="text" placeholder="Saisir une ou plusieurs clefs"  class="input-large search-query" data-provide="typeahead"/> <button class="btn">Recherche</button>
+        			<input id="recherchetout" name="search" type="text" placeholder="Saisir une ou plusieurs clefs"  class="input-medium search-query" data-provide="typeahead"/> <button class="btn"><i class="icon-search"></i></button>
         		</form>
         		<?php
 					$recherchedata = '';
@@ -522,7 +556,8 @@
         	</div>
         	<br /><br />
         	<h3>Liens utiles</h3>
-        	<div class="bordure">
+        	<hr />
+        	<div>
         		<?php
         			if($lienutile)
 						foreach ($lienutile as $lienutile) {
@@ -550,6 +585,5 @@
 				?>
         	</div>
         	
-        </div>
-     </div>
+   	 </div>
 </div>

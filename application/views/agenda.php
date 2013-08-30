@@ -1,4 +1,9 @@
-<div class="container">
+<div class="row-fluid">
+	<div class="fondjaune span12">
+		<center><h1>l'agenda et les évènements</h1></center>
+	</div>
+</div>
+<div class="row-fluid">
 	<script>
 		var geocoder;
 		var map;
@@ -65,9 +70,6 @@
 	</script>
 	
 	<table>
-		<caption>
-			<h1>l'agenda et les évènements<br /></h1>
-		</caption>
 		<tr>
 			<td valign="top">
 				<div id="map-canvas" style="width: 600px; height: 500px; margin: 20px auto;"></div>

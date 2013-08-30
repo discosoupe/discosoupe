@@ -1,14 +1,14 @@
-<header>
+<header class="carte">
 	<br />
-	<div class="row">
+	<div class="row-fluid">
 		<div class="span2" align="right">
 			<?php echo img("logo.png", $alt = "logo");?>
 		</div>
-		<div class="span7">
+		<div class="span6">
 			<h1>Disco Soupe</h1>
 			<h3>Le recyclage du gaspillage, la propriété du recyclage</h3>
 		</div>
-		<div class="span3">
+		<div class="span4">
 			<?php if ($this->session->userdata('is_logged_in') == 'ok'){ ?>
 			<form action="" method="post" class="form-inline" style="margin-top: 20px; margin-bottom: 8px">
 				<button name="deconnexion" class="btn" type="submit" value="deconnexion">deconnexion</button>
