@@ -29,6 +29,11 @@
             <li><a href="<?php echo site_url('tutoriel');?>">Tutoriel</a></li>
             <li><a href="<?php echo site_url('toolbox');?>">Tool Box</a></li>
             <li><a href="<?php echo site_url('atelier');?>">Ateliers</a></li>
+            <?php
+            	if($this->session->userdata('is_logged_in') == 'ok'){
+            		echo '<li><a href="'.site_url('valideuser').'">Valider Disco Copain</a></li>';
+            	}
+            ?>
           </ul>
         </li>
         <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo site_url('partenaire');?>"> Espace partenaires <b class="caret"></b> </a>

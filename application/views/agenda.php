@@ -1,5 +1,5 @@
 <div class="row-fluid">
-	<div class="fondjaune span12">
+	<div class="fondjaune soustitre span12">
 		<center><h1>l'agenda et les évènements</h1></center>
 	</div>
 	<script>
@@ -67,6 +67,7 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
 </div>
+<br />
 <div class="row-fluid">
 	<table class="carte span12">
 		<tr>

@@ -5,8 +5,25 @@ body{
 
 header{
 	height:135px;
-	background-image: url('../images/temp/headerbackground.png');
+	background-image: url('../images/floriane/banner.jpg');
 	background-repeat:no-repeat;
+}
+
+.logo{
+	margin-top: -10px;
+	margin-left: 25px;
+	width: 125px;
+	height: 156px;
+}
+
+.accroche{
+	margin-left:15px;
+	color: #FFFFFF;
+	font-size: 0.9em;
+}
+
+.soustitre{
+	margin-top: -20px;
 }
 
 h1{
@@ -26,7 +43,7 @@ h5{
 }
 
 #contenu{
-	width:1024px;
+	width:1000px;
 	margin-left:auto;
 	margin-right:auto;
 }

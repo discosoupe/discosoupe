@@ -8,12 +8,13 @@
 	}(document, 'script', 'facebook-jssdk'));
 </script>
 	<div class="row-fluid">
-		<div class="fondjaune span12">
+		<div class="fondjaune soustitre span12">
 			<center><h1>Actualités</h1></center>
 		</div>
 	</div>
+	<br />
 	<div class="row-fluid">
-        <div class="carte span8">
+        <div class="span8">
         	<?php if ($this->session->userdata('is_logged_in') == 'ok'){ ?>
         	<form method="post" enctype="multipart/form-data">
 				<table>
@@ -158,7 +159,7 @@
     					$alltitrearticle = array_unique(array_merge($alltitrearticle, array_unique(explode(" ", $titresansponctuation))));
     					$alltitrearticle = array_unique(array_merge($alltitrearticle, array_unique(explode(" ", $descriptionsansponctuation))));
     					?>
-						<div id="div<?php echo $art->idarticle; ?>">
+						<div id="div<?php echo $art->idarticle; ?>" class="carte">
 							<center>
 							<h2><a href="<?php echo site_url('actu?id='.$art->idarticle) ?>"><?php echo $art->titre; ?></a>
 							<?php if ($this->session->userdata('is_logged_in') == 'ok'){
@@ -254,6 +255,7 @@
 					        	</tr>
 							</table>
 						</div>
+						<br />
 						<?php
 							if ($this->session->userdata('is_logged_in') == 'ok'){
 						?>
@@ -445,145 +447,148 @@
 				}
 		   	?>
 		</div>
-        <div class="carte span4" style="margin-top: -60">
-        	<h3>Rechercher des articles</h3>
-        	<hr />
-        	<div>
-        		<form class="form-search" method="get">
-        			<input id="recherchetout" name="search" type="text" placeholder="Saisir une ou plusieurs clefs"  class="input-medium search-query" data-provide="typeahead"/> <button class="btn"><i class="icon-search"></i></button>
-        		</form>
-        		<?php
-					$recherchedata = '';
-					for($i=0;$i<count($alltitrearticle);$i++){
-						if(strlen($alltitrearticle[$i]) > 6){
-							if($i == count($alltitrearticle) - 1)
-							{
-								$recherchedata.= "'".$alltitrearticle[$i]."'";
-							}
-							else
-							{
-								$recherchedata.= "'".$alltitrearticle[$i]."', ";
+        <div class="span4" style="margin-top: -60">
+        	<div class="carte">
+	        	<h3>Rechercher des articles</h3>
+	        	<hr />
+	        	<div>
+	        		<form class="form-search" method="get">
+	        			<input id="recherchetout" name="search" type="text" placeholder="Saisir une ou plusieurs clefs"  class="input-medium search-query" data-provide="typeahead"/> <button class="btn"><i class="icon-search"></i></button>
+	        		</form>
+	        		<?php
+						$recherchedata = '';
+						for($i=0;$i<count($alltitrearticle);$i++){
+							if(strlen($alltitrearticle[$i]) > 6){
+								if($i == count($alltitrearticle) - 1)
+								{
+									$recherchedata.= "'".$alltitrearticle[$i]."'";
+								}
+								else
+								{
+									$recherchedata.= "'".$alltitrearticle[$i]."', ";
+								}
 							}
 						}
-					}
-        		?>
-        		<script>
-					var recherchedata = [<?php echo $recherchedata; ?>];
-					$(function (){
-					   $('#recherchetout').typeahead({source: recherchedata});
-					});  
-				</script>
-	
-        		<h4>Archives</h4>
-				
-        		<?php
-        			$tabannee = array();
-					$tabmois = array();
+	        		?>
+	        		<script>
+						var recherchedata = [<?php echo $recherchedata; ?>];
+						$(function (){
+						   $('#recherchetout').typeahead({source: recherchedata});
+						});  
+					</script>
+		
+	        		<h4>Archives</h4>
 					
-					// le calcul du nombre d'élément dans les archives par année et par mois
-					$cpt = 0;
-        			$annee = NULL;
-        			foreach ($archive as $elementarchive) {
-						$datearchive = explode("-", $elementarchive->date, -1);	
-						if($datearchive[0] != $annee){
-							$annee = $datearchive[0];
-							$mois = NULL;
-							array_push($tabannee, $cpt);
-						}
-						if($datearchive[1] != $mois){
-							$mois = $datearchive[1];
-							array_push($tabmois, $cpt);
-						}
-						$cpt = $cpt + 1;
-					}
-					array_push($tabannee, $cpt);
-					array_push($tabmois, $cpt);
-					$indiceannee = 1;
-					$indicemois = 1;
-					$annee = NULL;
-					
-					// L'affichage
-        			foreach ($archive as $elementarchive) {
-						$datearchive = explode("-", $elementarchive->date, -1);	
-						if($datearchive[0] != $annee){
-							if($annee != NULL){
-								echo "</div>\n</div>\n";
+	        		<?php
+	        			$tabannee = array();
+						$tabmois = array();
+						
+						// le calcul du nombre d'élément dans les archives par année et par mois
+						$cpt = 0;
+	        			$annee = NULL;
+	        			foreach ($archive as $elementarchive) {
+							$datearchive = explode("-", $elementarchive->date, -1);	
+							if($datearchive[0] != $annee){
+								$annee = $datearchive[0];
+								$mois = NULL;
+								array_push($tabannee, $cpt);
 							}
-							echo "<a id='annee".$elementarchive->idarticle."' style='cursor: pointer'>".$datearchive[0]." (".(($tabannee[$indiceannee]) - ($tabannee[$indiceannee - 1])).")</a><br />";
-							echo "
-							<script>
-							$('#annee".$elementarchive->idarticle."').click(
-									function(){
-										$('#a".$elementarchive->idarticle."').slideToggle();
-									}
-								);
-							</script>
-							";
-							echo "<div id='a".$elementarchive->idarticle."' style='display: none'>\n";
-							$annee = $datearchive[0];
-							$mois = NULL;
-							$indiceannee = $indiceannee + 1;
-						}
-						if($datearchive[1] != $mois){
-							if($mois != NULL){
-								echo "</div>";
+							if($datearchive[1] != $mois){
+								$mois = $datearchive[1];
+								array_push($tabmois, $cpt);
 							}
-							echo "\t <div class='archivemois'><a id='mois".$elementarchive->idarticle."' style='cursor: pointer'> > ".$convertmois[date('n', strtotime($elementarchive->date))]." (".(($tabmois[$indicemois]) - ($tabmois[$indicemois - 1])).")</a></div>";
-							echo "
-							<script>
-							$('#mois".$elementarchive->idarticle."').click(
-									function(){
-										$('#m".$elementarchive->idarticle."').slideToggle();
-									}
-								);
-							</script>
-							";
-							echo "<div id='m".$elementarchive->idarticle."' style='display: none'>\n";
-							$mois = $datearchive[1];
-							$indicemois = $indicemois + 1;
+							$cpt = $cpt + 1;
 						}
-						echo "\t\t<div id='".$elementarchive->idarticle."' class='archiveelement'><a href='".site_url('actu?id='.$elementarchive->idarticle)."'>".$elementarchive->titre."</a></div>\n";
-					}
-        		?>
-        			</div>
-				</div>
-				<h4>Thèmes des actualités</h4>
-				<?php
-					foreach ($allthemes as $tag) {
-						echo "<a href='".site_url('actu?theme='.$tag->nom)."'>".$tag->nom."(".$tag->count.")</a> ";
-					}
-				?>
-        	</div>
-        	<br /><br />
-        	<h3>Liens utiles</h3>
-        	<hr />
-        	<div>
-        		<?php
-        			if($lienutile)
-						foreach ($lienutile as $lienutile) {
-							echo "<a href='".$lienutile->url."'>".$lienutile->titre."</a>";
-							if ($this->session->userdata('is_logged_in') == 'ok'){
-								echo ' <a href="'.site_url('ajoutlienutile?id='.$lienutile->idlienutile).'"><i class="icon-trash"></i></a>';
+						array_push($tabannee, $cpt);
+						array_push($tabmois, $cpt);
+						$indiceannee = 1;
+						$indicemois = 1;
+						$annee = NULL;
+						
+						// L'affichage
+	        			foreach ($archive as $elementarchive) {
+							$datearchive = explode("-", $elementarchive->date, -1);	
+							if($datearchive[0] != $annee){
+								if($annee != NULL){
+									echo "</div>\n</div>\n";
+								}
+								echo "<a id='annee".$elementarchive->idarticle."' style='cursor: pointer'>".$datearchive[0]." (".(($tabannee[$indiceannee]) - ($tabannee[$indiceannee - 1])).")</a><br />";
+								echo "
+								<script>
+								$('#annee".$elementarchive->idarticle."').click(
+										function(){
+											$('#a".$elementarchive->idarticle."').slideToggle();
+										}
+									);
+								</script>
+								";
+								echo "<div id='a".$elementarchive->idarticle."' style='display: none'>\n";
+								$annee = $datearchive[0];
+								$mois = NULL;
+								$indiceannee = $indiceannee + 1;
 							}
-							echo "
-							<br />
-							".$lienutile->descriptionlienutile."
-							<br /><br />";
-					}
-					if ($this->session->userdata('is_logged_in') == 'ok'){
-					?>
-					<form class="well" action="<?php echo site_url('ajoutlienutile');?>" method="post">
-						<h4>Ajouter lien utile</h4>
-						<input name="urllienutile" type="text" placeholder="Url" />
-						<input name="titrelienutile" type="text" placeholder="Titre du lien" />
-						<textarea name="descriptionlienutile">description du lien</textarea>
-						<br />
-						<button name="ajoutlienutile" type="submit" class="btn" value="ajoutlienutile">Ajouter</button>
-					</form>
+							if($datearchive[1] != $mois){
+								if($mois != NULL){
+									echo "</div>";
+								}
+								echo "\t <div class='archivemois'><a id='mois".$elementarchive->idarticle."' style='cursor: pointer'> > ".$convertmois[date('n', strtotime($elementarchive->date))]." (".(($tabmois[$indicemois]) - ($tabmois[$indicemois - 1])).")</a></div>";
+								echo "
+								<script>
+								$('#mois".$elementarchive->idarticle."').click(
+										function(){
+											$('#m".$elementarchive->idarticle."').slideToggle();
+										}
+									);
+								</script>
+								";
+								echo "<div id='m".$elementarchive->idarticle."' style='display: none'>\n";
+								$mois = $datearchive[1];
+								$indicemois = $indicemois + 1;
+							}
+							echo "\t\t<div id='".$elementarchive->idarticle."' class='archiveelement'><a href='".site_url('actu?id='.$elementarchive->idarticle)."'>".$elementarchive->titre."</a></div>\n";
+						}
+	        		?>
+	        			</div>
+					</div>
+					<h4>Thèmes des actualités</h4>
 					<?php
-					}
-				?>
-        	</div>
+						foreach ($allthemes as $tag) {
+							echo "<a href='".site_url('actu?theme='.$tag->nom)."'>".$tag->nom."(".$tag->count.")</a> ";
+						}
+					?>
+	        	</div>
+	        </div>
+	        <br />
+	        <div class="carte">
+	        	<h3>Liens utiles</h3>
+	        	<hr />
+	        	<div>
+	        		<?php
+	        			if($lienutile)
+							foreach ($lienutile as $lienutile) {
+								echo "<a href='".$lienutile->url."'>".$lienutile->titre."</a>";
+								if ($this->session->userdata('is_logged_in') == 'ok'){
+									echo ' <a href="'.site_url('ajoutlienutile?id='.$lienutile->idlienutile).'"><i class="icon-trash"></i></a>';
+								}
+								echo "
+								<br />
+								".$lienutile->descriptionlienutile."
+								<br /><br />";
+						}
+						if ($this->session->userdata('is_logged_in') == 'ok'){
+						?>
+						<form class="well" action="<?php echo site_url('ajoutlienutile');?>" method="post">
+							<h4>Ajouter lien utile</h4>
+							<input name="urllienutile" type="text" placeholder="Url" />
+							<input name="titrelienutile" type="text" placeholder="Titre du lien" />
+							<textarea name="descriptionlienutile">description du lien</textarea>
+							<br />
+							<button name="ajoutlienutile" type="submit" class="btn" value="ajoutlienutile">Ajouter</button>
+						</form>
+						<?php
+						}
+					?>
+	        	</div>
         	
    	 </div>
 </div>

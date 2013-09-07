@@ -58,13 +58,36 @@ class Fr extends CI_Controller {
 	
 	public function connexion()
     {
-    	if($this->input->post('login') && $this->input->post('password'))
+    	if($this->input->post('mail') && $this->input->post('password'))
 		{
-			if($this->input->post('login') == 'admin' && $this->input->post('password') == 'disco'){
+			if($this->input->post('mail') == 'admin' && $this->input->post('password') == 'disco'){
 				$this->action_model->save_action('connexion', $this->id_ip);
 				$this->session->set_userdata(array('is_logged_in'=>'ok'));
 			}else{
-				$this->action_model->save_action('tentative de connexion', $this->id_ip);
+				if($this->input->post('inscription') == 'inscription'){
+					$this->load->model('user_model');
+					$this->user_model->save_user($this->input->post('mail'), $this->input->post('password'));
+					/* envoie de mail*/
+					$to      = 'bertrand@viravong.fr';
+				    $subject = "Une nouvelle personne vient de s'inscrire";
+				    $message = "Une nouvelle personne vient de s'inscrire";
+				    $headers = 'From: '.$this->input->post('mail').'' . "\r\n" .
+				    'Reply-To: '.$this->input->post('mail').'' . "\r\n" .
+				    'X-Mailer: PHP/' . phpversion();
+				    mail($to, $subject, $message, $headers);
+					redirect('inscrit');
+				}
+				if($this->input->post('connexion') == 'connexion'){
+					$this->load->model('user_model');
+					$id_user = $this->user_model->connect($this->input->post('mail'), $this->input->post('password'));
+					if($id_user && $id_user[0]->valide == 2){
+						$this->session->set_userdata(array('is_logged_in'=>'ok'));
+					}else{
+						echo "<script>
+							alert('identifiant ou mot de passe incorect');
+						</script>";
+					}
+				}
 			}
 		}
 		if($this->input->post('deconnexion')){
@@ -104,6 +127,30 @@ class Fr extends CI_Controller {
 		$this->layout->ajouter_js('activ_carousel');
 		$this->layout->set_titre('Accueil');
 		//$this->layout->set_theme('disco');
+		$this->load->model('carousel_model');
+		
+		if($this->session->userdata('is_logged_in') == 'ok'){
+			if($this->input->post('ajouterphoto') == 'ajouterphoto'){
+				$dossier = './assets/images/carousel/';
+				$ancien_nom_ajouterphoto = $_FILES['filecarousel']['name'];
+				$nom_fichier_ajouterphoto = time().'.'.end(explode(".", $ancien_nom_ajouterphoto));
+				$nom_ajouterphoto = NULL;
+				if(isset($_FILES['filecarousel']))
+				{
+					if(move_uploaded_file($_FILES['filecarousel']['tmp_name'], $dossier . $nom_fichier_ajouterphoto)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+				     {
+				     	$nom_ajouterphoto = $nom_fichier_ajouterphoto;
+				     	//echo 'Upload effectué avec succès !';
+				     }
+				}
+				$this->carousel_model->save_carousel($nom_ajouterphoto, "");
+			}
+			if($this->input->post('supprimerphoto')){
+				$this->carousel_model->delete_carousel($this->input->post('supprimerphoto'));
+			}
+		}
+		
+		$data['allcarousel'] = $this->carousel_model->get_carousel();
 		
 		$this->layout->views('header', $data)
 			->views('nav')
@@ -111,28 +158,59 @@ class Fr extends CI_Controller {
 			->view('accueil');
     }
 	
+	public function valideuser()
+    {
+    	if($this->session->userdata('is_logged_in') == 'ok'){
+	    	$this->action_model->save_action('valideuser', $this->id_ip);
+	    	$this->load->library('form_validation');
+	  
+			$this->load->library('layout');
+			$this->load_assets();
+			$this->layout->ajouter_css('jquery-ui');
+			$this->layout->ajouter_css('jquery-ui-timepicker-addon');
+			$this->layout->ajouter_js('bootstrap/js/bootstrap-transition');
+			$this->layout->ajouter_js('bootstrap/js/bootstrap-carousel');
+			$this->layout->ajouter_js('jquery-ui-sliderAccess');
+			$this->layout->ajouter_js('jquery-ui-timepicker-addon');
+			$this->layout->ajouter_js('activ_carousel');
+			$this->layout->set_titre('Valider Disco Copain');
+			//$this->layout->set_theme('disco');
+			
+			$this->load->model('user_model');
+			
+			if($this->input->post('valideuser')){
+				$this->user_model->valideuser($this->input->post('valideuser'));
+			}
+			
+			$data['usertovalide'] = $this->user_model->getusertovalide();
+			
+			$this->layout->views('header', $data)
+				->views('nav')
+				->view('valideuser');
+		}
+	}
+	
 	public function valideagenda()
     {
-    	
 		$this->action_model->save_action('valideagenda', $this->id_ip);
 		$this->load->library('form_validation');
 		
     	$this->form_validation->set_rules('lat', '"Latitude"', 'xss_clean');
 		$this->form_validation->set_rules('date', '"Format de date"', 'trim|required|max_length[25]|xss_clean');
 	    $this->form_validation->set_rules('lieu', '"Lieu"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('adresse', '"Adresse"', 'trim|required|min_length[1]|encode_php_tags|xss_clean');
+    	//$this->form_validation->set_rules('adresse', '"Adresse"', 'trim|required|min_length[1]|encode_php_tags|xss_clean');
 	    $this->form_validation->set_rules('evenement', '"Evènement"', 'trim|required|min_length[1]|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('telephone', '"Téléphone"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
-	    $this->form_validation->set_rules('contact', '"Contact"', 'trim|required|min_length[1]|encode_php_tags|xss_clean');
-    	$this->form_validation->set_rules('email', '"Email"', 'trim|required|min_length[1]|encode_php_tags|xss_clean|valid_email');
+    	//$this->form_validation->set_rules('telephone', '"Téléphone"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
+	    $this->form_validation->set_rules('contact', '"Contact"', 'trim|required|min_length[1]|encode_php_tags|xss_clean|valid_email');
+    	//$this->form_validation->set_rules('email', '"Email"', 'trim|required|min_length[1]|encode_php_tags|xss_clean|valid_email');
 		
 		$data['date'] = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
 		$data['lieu'] = $this->input->post('lieu');
-		$data['adresse'] = $this->input->post('adresse');
+		//$data['adresse'] = $this->input->post('adresse');
 		$data['evenement'] = $this->input->post('evenement');
-		$data['telephone'] = $this->input->post('telephone');
+		//$data['telephone'] = $this->input->post('telephone');
 		$data['contact'] = $this->input->post('contact');
-		$data['email'] = $this->input->post('email');
+		//$data['email'] = $this->input->post('email');
 		
 		require_once('recaptchalib.php');
 				
@@ -159,14 +237,14 @@ class Fr extends CI_Controller {
 					        $this->action_model->save_action('annonce disco', $this->id_ip);
 					        $date = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
 							$lieu = $this->input->post('lieu');
-							$adresse = $this->input->post('adresse');
+							//$adresse = $this->input->post('adresse');
 							$evenement = $this->input->post('evenement');
-							$telephone = $this->input->post('telephone');
+							//$telephone = $this->input->post('telephone');
 							$contact = $this->input->post('contact');
-							$email = $this->input->post('email');
+							//$email = $this->input->post('email');
 							$latitude = $this->input->post('lat');
 							$this->load->model('discosoupe_model');
-							$this->discosoupe_model->save_discosoupe($date, $lieu, $contact, $evenement, $adresse, $telephone, $email, $this->id_ip, $latitude);
+							$this->discosoupe_model->save_discosoupe($date, $lieu, $contact, $evenement, $this->id_ip, $latitude);
 							
 							$this->load->library('layout');
 							$this->load_assets();
@@ -185,7 +263,7 @@ class Fr extends CI_Controller {
 		
 		$this->load->library('layout');
 		$this->load_assets();
-		$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyByHqIM6t2XjMg6PMCTT11-4IGAT43Angc&sensor=false');
+		$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyAp0YYHWdMGFPR4donJzAZTtq33lcCOHDE&sensor=false');
 		$this->layout->set_titre('Valide Evènement');
 
 		$this->layout->views('header', $data)
@@ -703,6 +781,18 @@ class Fr extends CI_Controller {
 		$this->layout->views('header')
 			->views('nav')
 			->view('dossier');
+    }
+	
+	public function inscrit()
+    {
+    	$this->action_model->save_action('inscrit', $this->id_ip);
+		$this->load->library('layout');
+		$this->load_assets();
+		$this->layout->set_titre('inscrit');
+		
+		$this->layout->views('header')
+			->views('nav')
+			->view('inscrit');
     }
 }
 

@@ -34,9 +34,9 @@ if ( ! function_exists('img_url'))
  
 if ( ! function_exists('img'))
 {
-    function img($nom, $alt = '')
+    function img($nom, $alt = '', $classe = '')
     {
-        return '<img src="' . img_url($nom) . '" alt="' . $alt . '" />';
+        return '<img src="' . img_url($nom) . '" alt="' . $alt . '" class="' .$classe. '"/>';
     }
 }
 
