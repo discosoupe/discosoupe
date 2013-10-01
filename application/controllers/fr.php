@@ -37,12 +37,132 @@ class Fr extends CI_Controller {
 			$this->id_ip = $resultat->idip;
 		}
 		$this->load->model('action_model');
+		
 		$this->connexion();
 	}
 	
+	public function connectwithfb(){
+		if(ENVIRONNEMENT == 'PROD'){
+			require 'src/facebook.php';
+	
+			$facebook = new Facebook(array(
+			  'appId'  => '150299105165119',
+			  'secret' => 'f880e1778ff569d43b10840ac90997f7',
+			));
+			
+			// See if there is a user from a cookie
+			$user = $facebook->getUser();
+			
+			$user_profile = NULL;
+			
+			if ($user) {
+			  try {
+			    // Proceed knowing you have a logged in user who's authenticated.
+			    $user_profile = $facebook->api('/me');
+			  } catch (FacebookApiException $e) {
+			    //echo '<pre>'.htmlspecialchars(print_r($e, true)).'</pre>';
+			    $user = NULL;
+			  }
+			}
+			if($user_profile != NULL){
+				$this->load->model('user_model');
+				$id_user = $this->user_model->connect($user_profile['name'], $user_profile['id'].'disco');
+				if($id_user){
+					if($id_user[0]->valide == 2){
+						$this->session->set_userdata(array('is_logged_in'=>'ok'));
+						$this->session->set_userdata(array('facebook'=>'ok'));
+					}
+				}else{
+					$this->user_model->save_user($user_profile['name'], $user_profile['id'].'disco');
+					/* envoie de mail*/
+					$to      = 'bertrand@viravong.fr';
+				    $subject = "Une nouvelle personne vient de s'inscrire sur facebook";
+				    $message = "Une nouvelle personne vient de s'inscrire sur facebook";
+				    $headers = 'From: '.$this->input->post('mail').'' . "\r\n" .
+				    'Reply-To: '.$this->input->post('mail').'' . "\r\n" .
+				    'X-Mailer: PHP/' . phpversion();
+				    mail($to, $subject, $message, $headers);
+					redirect('inscrit');
+				}
+			}else{
+				if($this->session->userdata('facebook') == 'ok'){
+					$this->action_model->save_action('deconnexionfb', $this->id_ip);
+					$this->session->unset_userdata('is_logged_in');
+					$this->session->sess_destroy();
+				}
+			}
+			return $user_profile;
+		}
+		if(ENVIRONNEMENT == 'DEV'){
+			return NULL;
+		}
+	}
+	
+	public function eventwithfb($listeidevent){
+		if(ENVIRONNEMENT == 'PROD'){
+	
+			$facebook = new Facebook(array(
+			  'appId'  => '150299105165119',
+			  'secret' => 'f880e1778ff569d43b10840ac90997f7',
+			));
+			
+			$user_profile = NULL;
+			
+			$nbidevent = count($listeidevent);
+			if($nbidevent > 0)
+			{
+				$fql = "SELECT 
+				            eid, name, pic_big, start_time, end_time, host, location, description, attending_count
+				        FROM 
+				            event ";
+				for($i = 0; $i < $nbidevent; $i++){
+					if($i == 0){
+						$fql .= "WHERE  eid = ".$listeidevent[$i];
+					}else{
+						$fql .= "OR  eid = ".$listeidevent[$i];
+					}
+				}
+				$fql .= " ORDER BY 
+				            start_time asc";
+				
+				/* $fql = "SELECT 
+				            name, pic, start_time, end_time, location, description 
+				        FROM 
+				            event 
+				        WHERE 
+				            eid IN ( SELECT eid FROM event_member WHERE uid = 221167777906963 ) 
+				        AND 
+				            start_time >= now()
+				        ORDER BY 
+				            start_time desc";			
+				*/
+				
+				$param  =   array(
+				    'method'    => 'fql.query',
+				    'query'     => $fql,
+				    'callback'  => ''
+				);
+				
+			 	try {
+			    	// Proceed knowing you have a logged in user who's authenticated.
+			    	$user_profile = $facebook->api($param);
+			  	} catch (FacebookApiException $e) {
+			    	//echo '<pre>'.htmlspecialchars(print_r($e, true)).'</pre>';
+			    	$user = NULL;
+			    }
+		    }
+			return $user_profile;
+		}
+		if(ENVIRONNEMENT == 'DEV'){
+			return NULL;
+		}
+	}
+	
+	
 	public function index()
     {
-        $this->accueil();
+    	redirect("https://www.facebook.com/DiscoSoupe?fref=ts");
+        //$this->accueil();
     }
 	
 	public function load_assets(){
@@ -58,6 +178,7 @@ class Fr extends CI_Controller {
 	
 	public function connexion()
     {
+    	
     	if($this->input->post('mail') && $this->input->post('password'))
 		{
 			if($this->input->post('mail') == 'admin' && $this->input->post('password') == 'disco'){
@@ -97,24 +218,14 @@ class Fr extends CI_Controller {
 		}
 	}
 		
-	public function example(){
-		$this->load->library('layout');
-		$this->layout->views('header')
-			->view('example');
-	}	
-
-	public function with_js_sdk(){
-		$this->load->library('layout');
-		$this->layout->views('header')
-			->view('with_js_sdk');
-	}
 	
 	public function accueil()
     {
     	$this->action_model->save_action('accueil', $this->id_ip);
     	$this->load->library('form_validation');
-  
+
 		$data['user_ip'] = $this->id_ip;
+		$data['user_profile'] = $this->connectwithfb();
 			
 		$this->load->library('layout');
 		$this->load_assets();
@@ -125,7 +236,7 @@ class Fr extends CI_Controller {
 		$this->layout->ajouter_js('jquery-ui-sliderAccess');
 		$this->layout->ajouter_js('jquery-ui-timepicker-addon');
 		$this->layout->ajouter_js('activ_carousel');
-		$this->layout->set_titre('Accueil');
+		$this->layout->set_titre('Disco Soupe');
 		//$this->layout->set_theme('disco');
 		$this->load->model('carousel_model');
 		
@@ -155,7 +266,8 @@ class Fr extends CI_Controller {
 		$this->layout->views('header', $data)
 			->views('nav')
 			->views('carousel')
-			->view('accueil');
+			->views('accueil')
+			->view('footer');
     }
 	
 	public function valideuser()
@@ -176,6 +288,8 @@ class Fr extends CI_Controller {
 			$this->layout->set_titre('Valider Disco Copain');
 			//$this->layout->set_theme('disco');
 			
+			$data['user_profile'] = $this->connectwithfb();
+			
 			$this->load->model('user_model');
 			
 			if($this->input->post('valideuser')){
@@ -186,8 +300,43 @@ class Fr extends CI_Controller {
 			
 			$this->layout->views('header', $data)
 				->views('nav')
-				->view('valideuser');
+				->views('valideuser')
+				->view('footer');
 		}
+	}
+	
+	public function calendar(){
+		$month = isset($_GET['month']) ? $_GET['month'] : date('n');
+		$year = isset($_GET['year']) ? $_GET['year'] : date('Y');
+		
+		$this->load->model('discosoupe_model');
+		$data['discosoupe'] = $this->discosoupe_model->get_discosoupe();
+		
+		$table = $data['discosoupe'];
+		
+		$array = array();
+		
+		for($i = 0; $i < count($table); $i++){
+			if($table[$i]->valide == 1){
+				$array_evenement = array(
+					date('d/m/Y' , strtotime($table[$i]->date)),
+				    $table[$i]->evenement, 
+				    '#'.$table[$i]->iddiscosoupe, 
+				    '#CAD91A'
+				);
+			}
+			if($table[$i]->valide == 2){
+				$array_evenement = array(
+					date('d/m/Y' , strtotime($table[$i]->date)),
+				    $table[$i]->contact, 
+				    'https://www.facebook.com/events/'.$table[$i]->evenement, 
+				    '#7A4C61',
+				);
+			}
+			array_push($array, $array_evenement);
+		}
+		
+		echo json_encode($array);
 	}
 	
 	public function valideagenda()
@@ -195,9 +344,11 @@ class Fr extends CI_Controller {
 		$this->action_model->save_action('valideagenda', $this->id_ip);
 		$this->load->library('form_validation');
 		
+		$data['user_profile'] = $this->connectwithfb();
+		
     	$this->form_validation->set_rules('lat', '"Latitude"', 'xss_clean');
 		$this->form_validation->set_rules('date', '"Format de date"', 'trim|required|max_length[25]|xss_clean');
-	    $this->form_validation->set_rules('lieu', '"Lieu"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
+	    $this->form_validation->set_rules('ville', '"ville"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
     	//$this->form_validation->set_rules('adresse', '"Adresse"', 'trim|required|min_length[1]|encode_php_tags|xss_clean');
 	    $this->form_validation->set_rules('evenement', '"Evènement"', 'trim|required|min_length[1]|encode_php_tags|xss_clean');
     	//$this->form_validation->set_rules('telephone', '"Téléphone"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
@@ -205,7 +356,7 @@ class Fr extends CI_Controller {
     	//$this->form_validation->set_rules('email', '"Email"', 'trim|required|min_length[1]|encode_php_tags|xss_clean|valid_email');
 		
 		$data['date'] = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
-		$data['lieu'] = $this->input->post('lieu');
+		$data['ville'] = $this->input->post('ville');
 		//$data['adresse'] = $this->input->post('adresse');
 		$data['evenement'] = $this->input->post('evenement');
 		//$data['telephone'] = $this->input->post('telephone');
@@ -236,7 +387,7 @@ class Fr extends CI_Controller {
 					    {
 					        $this->action_model->save_action('annonce disco', $this->id_ip);
 					        $date = date('Y-m-d H:i:s', strtotime($this->input->post('date')));
-							$lieu = $this->input->post('lieu');
+							$ville = $this->input->post('ville');
 							//$adresse = $this->input->post('adresse');
 							$evenement = $this->input->post('evenement');
 							//$telephone = $this->input->post('telephone');
@@ -244,11 +395,11 @@ class Fr extends CI_Controller {
 							//$email = $this->input->post('email');
 							$latitude = $this->input->post('lat');
 							$this->load->model('discosoupe_model');
-							$this->discosoupe_model->save_discosoupe($date, $lieu, $contact, $evenement, $this->id_ip, $latitude);
+							$this->discosoupe_model->save_discosoupe($date, $ville, $contact, $evenement, $this->id_ip, $latitude);
 							
 							$this->load->library('layout');
 							$this->load_assets();
-							$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyByHqIM6t2XjMg6PMCTT11-4IGAT43Angc&sensor=false');
+							$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyAp0YYHWdMGFPR4donJzAZTtq33lcCOHDE&sensor=false');
 							$this->layout->set_titre('Agenda');
 					
 							redirect('/agenda');
@@ -268,14 +419,35 @@ class Fr extends CI_Controller {
 
 		$this->layout->views('header', $data)
 			->views('nav')
-			->view('valideagenda');
+			->views('valideagenda')
+			->view('footer');
     }
+
+	public function synchroniserfb(){
+		if($this->session->userdata('is_logged_in') == 'ok'){
+	    	$this->action_model->save_action('synchroniserfb', $this->id_ip);
+	    	$this->load->library('form_validation');
+	  
+			$this->load->library('layout');
+			$this->load_assets();
+			$this->layout->set_titre('Synchroniser Evenement Facebook');
+			//$this->layout->set_theme('disco');
+			
+			$data['user_profile'] = $this->connectwithfb();
+			
+			$this->layout->views('header', $data)
+				->views('nav')
+				->views('synchroniserfb')
+				->view('footer');
+		}
+	}
 
 	public function annoncepartenaire()
     {
     	$this->action_model->save_action('annonce partenaire', $this->id_ip);
     	$this->load->library('form_validation');
   
+  		$data['user_profile'] = $this->connectwithfb();
 		$data['user_ip'] = $this->id_ip;
 		
 		$this->load->library('layout');
@@ -289,7 +461,8 @@ class Fr extends CI_Controller {
 		$this->layout->views('header', $data)
 			->views('nav')
 			->views('carousel')
-			->view('annoncepartenaire');
+			->views('annoncepartenaire')
+			->view('footer');
     }
 	
 	public function validepartenaire()
@@ -297,6 +470,8 @@ class Fr extends CI_Controller {
     	
 		$this->action_model->save_action('valideagenda', $this->id_ip);
 		$this->load->library('form_validation');
+		
+		$data['user_profile'] = $this->connectwithfb();
 		
 		$this->form_validation->set_rules('entreprise_partenaire', '"Entreprise"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
 	    $this->form_validation->set_rules('adresse_partenaire', '"Adresse"', 'trim|required|min_length[1]|max_length[52]|encode_php_tags|xss_clean');
@@ -363,12 +538,15 @@ class Fr extends CI_Controller {
 
 		$this->layout->views('header', $data)
 			->views('nav')
-			->view('validepartenaire');
+			->views('validepartenaire')
+			->view('footer');
     }
 	
 	public function actu()
     {
     	$this->action_model->save_action('actu', $this->id_ip);
+		
+		$data['user_profile'] = $this->connectwithfb();
 		
 		$this->load->model('article_model');
 		$this->load->model('theme_model');
@@ -486,9 +664,10 @@ class Fr extends CI_Controller {
 		$this->layout->set_titre('Toutes l\'Actualité');
 		
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('actu', $data);
+			->views('actu', $data)
+			->view('footer');
     }
     
     public function majarticle()
@@ -585,8 +764,15 @@ class Fr extends CI_Controller {
     {
     	$this->action_model->save_action('agenda', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
-		$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyByHqIM6t2XjMg6PMCTT11-4IGAT43Angc&sensor=false');
+		
+		$this->layout->ajouter_css('bootstrap_calendar');
+		$this->layout->ajouter_js('bootstrap_calendar.min');
+		
+		$this->layout->ajouter_ext('https://maps.googleapis.com/maps/api/js?key=AIzaSyAp0YYHWdMGFPR4donJzAZTtq33lcCOHDE&sensor=false');
 		$this->layout->set_titre('Evenement et agenda');
 		
 		$this->load->model('discosoupe_model');
@@ -595,159 +781,239 @@ class Fr extends CI_Controller {
 		$data['convertjour'] = array("Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi");
 		$data['convertmois'] = array("","Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
 		
+		$table = $data['discosoupe'];
+		$listeeventfb = array();
+		$listeeventfbok = FALSE;
+		$data['event_facebook'] = NULL;
+		for($i=0; $i < count($table); $i++)
+		{
+			// Si valide = 2, ca veut dire que c'est un event facebook
+			if($table[$i]->valide == 2){
+				$listeeventfbok = TRUE;
+				array_push($listeeventfb, $table[$i]->evenement);
+			}
+		}
+		
+		if($listeeventfbok == TRUE){
+			$data['discosoupefb'] = $this->eventwithfb($listeeventfb);
+		}
+		
 		$this->layout->views('header', $data)
 			->views('nav')
-			->view('agenda');
+			->views('agenda')
+			->view('footer');
     }
+	
+	public function supprimerevenement()
+    {
+    	if($this->session->userdata('is_logged_in') == 'ok'){
+    		if($this->input->post('tosuppr') !=NULL && is_numeric($this->input->post('tosuppr'))){
+    			$this->load->model('discosoupe_model');
+				$this->discosoupe_model->suppr_discosoupe($this->input->post('tosuppr'));
+				redirect('agenda');
+			}
+		}
+	}
 	
 	public function presse()
     {
     	$this->action_model->save_action('presse', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Presse');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('presse');
+			->views('presse')
+			->view('footer');
     }
 	
 	public function association()
     {
     	$this->action_model->save_action('association', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Notre Association');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('association');
+			->views('association')
+			->view('footer');
     }
 	
 	public function concept()
     {
     	$this->action_model->save_action('concept', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Concept');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('concept');
+			->views('concept')
+			->view('footer');
     }
 	
 	public function historique()
     {
     	$this->action_model->save_action('historique', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Historique');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('historique');
+			->views('historique')
+			->view('footer');
     }
 	
 	public function valeur()
     {
     	$this->action_model->save_action('valeur', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Valeur');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('valeur');
+			->views('valeur')
+			->view('footer');
     }
 	
 	public function localisation()
     {
     	$this->action_model->save_action('localisation', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('localisation');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('localisation');
+			->views('localisation')
+			->view('footer');
     }
 	
 	public function gaspillage()
     {
     	$this->action_model->save_action('gaspillage', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Le Gaspillage en image');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('gaspillage');
+			->views('gaspillage')
+			->view('footer');
     }
 	
 	public function discosoupe()
     {
     	$this->action_model->save_action('disco soupe', $this->id_ip);
         $this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('Espace Discopains');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('discosoupe');
+			->views('discosoupe')
+			->view('footer');
     }
 	
 	public function recette()
     {
     	$this->action_model->save_action('recette', $this->id_ip);
         $this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('recette');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('recette');
+			->views('recette')
+			->view('footer');
     }
 	
 	public function tutoriel()
     {
     	$this->action_model->save_action('tutoriel', $this->id_ip);
         $this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('tutoriel');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('tutoriel');
+			->views('tutoriel')
+			->view('footer');
     }
 
 	public function toolbox()
     {
     	$this->action_model->save_action('toolbox', $this->id_ip);
         $this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('toolbox');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('toolbox');
+			->views('toolbox')
+			->view('footer');
     }
 	
 	public function atelier()
     {
     	$this->action_model->save_action('atelier', $this->id_ip);
         $this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('atelier');
 		//$this->layout->set_theme('disco');
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('atelier');
+			->views('atelier')
+			->view('footer');
     }
 	
 	public function partenaire()
     {
     	$this->action_model->save_action('partenaire', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('espace partenaires');
 		
@@ -756,44 +1022,89 @@ class Fr extends CI_Controller {
 
 		$this->layout->views('header', $data)
 			->views('nav')
-			->view('partenaire');
+			->views('partenaire')
+			->view('footer');
     }
 	
 	public function aide()
     {
     	$this->action_model->save_action('aide', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('comment nous aider');
 		
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('aide');
+			->views('aide')
+			->view('footer');
     }
 	
 	public function dossier()
     {
     	$this->action_model->save_action('dossier', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		$data['event_facebook'] = $this->eventwithfb(2);
+		
+		$this->load->library('form_validation');
+		
+    	$this->form_validation->set_rules('fblinkevent', '"lien facebook"', 'xss_clean');
+	    
+		if($this->input->post('fblinkevent')){
+			$lienfb = $this->input->post('fblinkevent');
+			
+			$tablefb = explode("/", $lienfb);
+			
+			if(is_numeric($tablefb[4])){
+				echo "le lien fb : ".$tablefb[4];
+			}
+		}
+		
 		$this->load_assets();
 		$this->layout->set_titre('dossier de presse');
 		
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('dossier');
+			->views('dossier', $data)
+			->view('footer');
     }
 	
 	public function inscrit()
     {
     	$this->action_model->save_action('inscrit', $this->id_ip);
 		$this->load->library('layout');
+		
+		$data['user_profile'] = $this->connectwithfb();
+		
 		$this->load_assets();
 		$this->layout->set_titre('inscrit');
 		
-		$this->layout->views('header')
+		$this->layout->views('header', $data)
 			->views('nav')
-			->view('inscrit');
+			->views('inscrit')
+			->view('footer');
     }
+	
+	public function footercontact(){
+		$this->load->library('form_validation');
+	  
+	    $this->form_validation->set_rules('footerobjet', '"Objet"', 'trim|required|xss_clean');
+	    $this->form_validation->set_rules('footermessage','"Message"', 'trim|required|xss_clean');
+		$this->form_validation->set_rules('footermail','"Mail"', 'trim|required|xss_clean');
+		
+	    $to      = 'contact@discosoupe.org';
+	    $subject = $this->input->post('footerobjet');
+	    $message = $this->input->post('footermessage');
+	    $headers = 'From: '.$this->input->post('footermail').'' . "\r\n" .
+	    'Reply-To: '.$this->input->post('footermail').'' . "\r\n" .
+	    'X-Mailer: PHP/' . phpversion();
+	
+	    mail($to, $subject, $message, $headers);
+	}
 }
 
 /* End of file welcome.php */

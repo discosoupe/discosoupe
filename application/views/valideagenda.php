@@ -18,14 +18,8 @@
 			</div>
 			<div class="control-group"> 
 			    <div class="controls">
-			      <input type="hidden" id="lieu" name="lieu" value="<?php echo $lieu; ?>" >
-			      <h5><?php echo form_error('lieu'); ?></h5>
-			    </div>
-			</div>
-			<div class="control-group"> 
-			    <div class="controls">
-			    	<input type="hidden" id="adresse"  name="adresse" value="<?php echo $adresse; ?>" >
-			       <h5><?php echo form_error('adresse'); ?></h5>
+			      <input type="hidden" id="ville" name="ville" value="<?php echo $ville; ?>" >
+			      <h5><?php echo form_error('ville'); ?></h5>
 			    </div>
 			</div>
 			<div class="control-group">
@@ -36,20 +30,8 @@
 			</div>
 			<div class="control-group"> 
 			    <div class="controls">
-			      <input type="hidden" id="telephone"  name="telephone" value="<?php echo $telephone; ?>" >
-			       <h5><?php echo form_error('telephone'); ?></h5>
-			    </div>
-			</div>
-			<div class="control-group"> 
-			    <div class="controls">
 			      <input type="hidden" id="contact"  name="contact" value="<?php echo $contact; ?>" >
 			       <h5><?php echo form_error('contact'); ?></h5>
-			    </div>
-			</div>
-			<div class="control-group"> 
-			    <div class="controls">
-			      <input type="hidden" id="email"  name="email" value="<?php echo $email; ?>" >
-			       <h5><?php echo form_error('email'); ?></h5>
 			    </div>
 			</div>
 		 	 <div class="control-group">
@@ -76,7 +58,7 @@
 				}
 				
 				function codeAddress() {
-				  var address = "<?php echo $adresse.', '.$lieu;?>";
+				  var address = "<?php echo $ville;?>";
 				  geocoder.geocode( { 'address': address}, function(results, status) {
 				    if (status == google.maps.GeocoderStatus.OK) {
 				      map.setCenter(results[0].geometry.location);

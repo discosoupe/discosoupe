@@ -17,9 +17,10 @@ header{
 }
 
 .accroche{
+	margin-top: -10px;
 	margin-left:15px;
 	color: #FFFFFF;
-	font-size: 0.9em;
+	font-size: 0.85em;
 }
 
 .soustitre{
@@ -42,6 +43,10 @@ h5{
 	color: #7A4C61;
 }
 
+.event_space{
+	width: 250px;
+}
+
 #contenu{
 	width:1000px;
 	margin-left:auto;
@@ -54,9 +59,11 @@ h5{
 	padding: 20px;
 }
 
-.carte2{
+.carteevent{
 	background-color: white;
 	box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	text-align: center;
 }
 
 #myCarousel{
@@ -132,5 +139,34 @@ a:hover{
 	-webkit-border-radius:50px;
     -moz-border-radius:50px;
     border-radius:50px;
-    margin: 10px;
+}
+
+#loading{
+	position:fixed;
+    width:100%;
+    height:100%;
+    text-align:center;
+    background: url('../images/floriane/ajax-loader.gif') center center no-repeat;
+    display:none;
+	z-index:1;
+}
+
+.titreevent{
+	overflow: hidden;
+	height: 55px;
+}
+
+.tablediscoevent{
+	text-align: center;
+}
+
+.coordonnee{
+	width: 166px;
+	height: 43px;
+	overflow: hidden;
+}
+
+.pic_big{
+	width: 150px;
+	height: 150px;
 }

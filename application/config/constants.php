@@ -1,5 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+
+define('ENVIRONNEMENT', 'DEV');
+
 /*
 |--------------------------------------------------------------------------
 | File and Directory Modes

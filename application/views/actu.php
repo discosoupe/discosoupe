@@ -168,7 +168,7 @@
 							</h2>
 							</center>
 							<hr />
-							<center><img alt="" src="<?php echo img_url('uploads/'.$art->image) ?>" width="580"/></center>
+							<center><img alt="" src="<?php echo img_url('uploads/'.$art->image) ?>" max-width="580"/></center>
 				        	<br />
 				        	<?php echo $art->description; ?>
 				        	<br /><br />
@@ -458,7 +458,7 @@
 	        		<?php
 						$recherchedata = '';
 						for($i=0;$i<count($alltitrearticle);$i++){
-							if(strlen($alltitrearticle[$i]) > 6){
+							if(isset($alltitrearticle[$i]) && strlen($alltitrearticle[$i]) > 6){
 								if($i == count($alltitrearticle) - 1)
 								{
 									$recherchedata.= "'".$alltitrearticle[$i]."'";
